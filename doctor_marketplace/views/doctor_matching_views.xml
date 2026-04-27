@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- ============================================================ -->
+    <!-- DOCTOR MATCH REQUEST VIEWS                                   -->
+    <!-- ============================================================ -->
+    
+    <record id="doctor_match_request_view_list" model="ir.ui.view">
+        <field name="name">doctor.match.request.list</field>
+        <field name="model">doctor.match.request</field>
+        <field name="arch" type="xml">
+            <list string="Match Requests">
+                <field name="name"/>
+                <field name="create_date"/>
+                <field name="patient_id"/>
+                <field name="specialization_id"/>
+                <field name="city"/>
+                <field name="urgency"/>
+                <field name="match_count"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="doctor_match_request_view_form" model="ir.ui.view">
+        <field name="name">doctor.match.request.form</field>
+        <field name="model">doctor.match.request</field>
+        <field name="arch" type="xml">
+            <form string="Doctor Match Request">
+                <header>
+                    <button name="action_search" string="Find Doctors" type="object" class="btn-primary" invisible="state not in ('draft', 'found')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Patient">
+                            <field name="patient_id"/>
+                            <field name="symptom_check_id"/>
+                        </group>
+                        <group string="Urgency">
+                            <field name="urgency"/>
+                            <field name="preferred_date"/>
+                            <field name="preferred_time"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Preferences">
+                            <field name="specialization_id"/>
+                            <field name="preferred_gender"/>
+                            <field name="min_rating"/>
+                            <field name="min_experience"/>
+                            <field name="max_fee"/>
+                        </group>
+                        <group string="Location">
+                            <field name="city"/>
+                            <field name="max_distance"/>
+                            <field name="consultation_mode"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Match Results" name="results">
+                            <field name="match_ids">
+                                <list>
+                                    <field name="doctor_name"/>
+                                    <field name="specialization"/>
+                                    <field name="rating"/>
+                                    <field name="experience"/>
+                                    <field name="fee"/>
+                                    <field name="city"/>
+                                    <field name="match_score"/>
+                                    <field name="is_selected"/>
+                                    <button name="action_select" string="Select" type="object" icon="fa-check"/>
+                                    <button name="action_book" string="Book" type="object" icon="fa-calendar"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                    <group invisible="not selected_doctor_id">
+                        <field name="selected_doctor_id"/>
+                        <field name="appointment_id"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="doctor_match_request_action" model="ir.actions.act_window">
+        <field name="name">Doctor Matching</field>
+        <field name="res_model">doctor.match.request</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- MATCH RESULT VIEWS                                           -->
+    <!-- ============================================================ -->
+    
+    <record id="doctor_match_result_view_list" model="ir.ui.view">
+        <field name="name">doctor.match.result.list</field>
+        <field name="model">doctor.match.result</field>
+        <field name="arch" type="xml">
+            <list string="Match Results">
+                <field name="doctor_name"/>
+                <field name="specialization"/>
+                <field name="rating"/>
+                <field name="experience"/>
+                <field name="fee"/>
+                <field name="city"/>
+                <field name="match_score" widget="progressbar"/>
+                <field name="is_selected"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="doctor_match_result_action" model="ir.actions.act_window">
+        <field name="name">Match Results</field>
+        <field name="res_model">doctor.match.result</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

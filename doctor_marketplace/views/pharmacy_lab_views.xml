@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- ============================================================ -->
+    <!-- PHARMACY PARTNER VIEWS                                       -->
+    <!-- ============================================================ -->
+    
+    <record id="pharmacy_partner_view_list" model="ir.ui.view">
+        <field name="name">pharmacy.partner.list</field>
+        <field name="model">pharmacy.partner</field>
+        <field name="arch" type="xml">
+            <list string="Pharmacy Partners">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="city"/>
+                <field name="partnership_type"/>
+                <field name="commission_rate"/>
+                <field name="order_count"/>
+                <field name="rating"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="pharmacy_partner_view_form" model="ir.ui.view">
+        <field name="name">pharmacy.partner.form</field>
+        <field name="model">pharmacy.partner</field>
+        <field name="arch" type="xml">
+            <form string="Pharmacy Partner">
+                <header>
+                    <button name="action_submit" string="Submit" type="object" invisible="state != 'draft'"/>
+                    <button name="action_approve" string="Approve" type="object" class="btn-success" invisible="state != 'pending'" groups="doctor_marketplace.group_doctor_marketplace_manager"/>
+                    <button name="action_suspend" string="Suspend" type="object" invisible="state != 'active'" groups="doctor_marketplace.group_doctor_marketplace_manager"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Pharmacy Name"/></h1>
+                        <field name="code"/>
+                    </div>
+                    <group>
+                        <group string="Contact">
+                            <field name="email"/>
+                            <field name="phone"/>
+                            <field name="mobile"/>
+                            <field name="website"/>
+                        </group>
+                        <group string="License">
+                            <field name="license_number"/>
+                            <field name="license_expiry"/>
+                            <field name="gst_number"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Address">
+                            <field name="street"/>
+                            <field name="city"/>
+                            <field name="state_id"/>
+                            <field name="zip_code"/>
+                        </group>
+                        <group string="Partnership">
+                            <field name="partnership_type"/>
+                            <field name="commission_rate"/>
+                            <field name="contract_start"/>
+                            <field name="contract_end"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Operations" name="operations">
+                            <group>
+                                <group>
+                                    <field name="is_24x7"/>
+                                    <field name="home_delivery"/>
+                                    <field name="delivery_radius"/>
+                                </group>
+                                <group>
+                                    <field name="operating_hours"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Bank Details" name="bank">
+                            <group>
+                                <group>
+                                    <field name="bank_name"/>
+                                    <field name="bank_account"/>
+                                    <field name="bank_ifsc"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Statistics" name="stats">
+                            <group>
+                                <field name="order_count"/>
+                                <field name="total_revenue"/>
+                                <field name="rating"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="pharmacy_partner_action" model="ir.actions.act_window">
+        <field name="name">Pharmacy Partners</field>
+        <field name="res_model">pharmacy.partner</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- LAB PARTNER VIEWS                                            -->
+    <!-- ============================================================ -->
+    
+    <record id="lab_partner_view_list" model="ir.ui.view">
+        <field name="name">lab.partner.list</field>
+        <field name="model">lab.partner</field>
+        <field name="arch" type="xml">
+            <list string="Lab Partners">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="city"/>
+                <field name="nabl_accredited"/>
+                <field name="partnership_type"/>
+                <field name="booking_count"/>
+                <field name="rating"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="lab_partner_view_form" model="ir.ui.view">
+        <field name="name">lab.partner.form</field>
+        <field name="model">lab.partner</field>
+        <field name="arch" type="xml">
+            <form string="Lab Partner">
+                <header>
+                    <button name="action_submit" string="Submit" type="object" invisible="state != 'draft'"/>
+                    <button name="action_approve" string="Approve" type="object" class="btn-success" invisible="state != 'pending'" groups="doctor_marketplace.group_doctor_marketplace_manager"/>
+                    <button name="action_suspend" string="Suspend" type="object" invisible="state != 'active'" groups="doctor_marketplace.group_doctor_marketplace_manager"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Lab Name"/></h1>
+                        <field name="code"/>
+                    </div>
+                    <group>
+                        <group string="Contact">
+                            <field name="email"/>
+                            <field name="phone"/>
+                            <field name="website"/>
+                        </group>
+                        <group string="Accreditation">
+                            <field name="nabl_accredited"/>
+                            <field name="nabl_number" invisible="not nabl_accredited"/>
+                            <field name="cap_accredited"/>
+                            <field name="license_number"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Address">
+                            <field name="street"/>
+                            <field name="city"/>
+                            <field name="state_id"/>
+                        </group>
+                        <group string="Partnership">
+                            <field name="partnership_type"/>
+                            <field name="commission_rate"/>
+                            <field name="contract_start"/>
+                            <field name="contract_end"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Services" name="services">
+                            <group>
+                                <group>
+                                    <field name="home_collection"/>
+                                    <field name="home_collection_fee" invisible="not home_collection"/>
+                                    <field name="report_delivery_hours"/>
+                                </group>
+                            </group>
+                            <field name="test_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="category"/>
+                                    <field name="price"/>
+                                    <field name="turnaround_hours"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="lab_partner_action" model="ir.actions.act_window">
+        <field name="name">Lab Partners</field>
+        <field name="res_model">lab.partner</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- LAB TEST VIEWS                                               -->
+    <!-- ============================================================ -->
+    
+    <record id="lab_test_view_list" model="ir.ui.view">
+        <field name="name">lab.test.list</field>
+        <field name="model">lab.test</field>
+        <field name="arch" type="xml">
+            <list string="Lab Tests">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="lab_id"/>
+                <field name="category"/>
+                <field name="price"/>
+                <field name="discounted_price"/>
+                <field name="turnaround_hours"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="lab_test_action" model="ir.actions.act_window">
+        <field name="name">Lab Tests</field>
+        <field name="res_model">lab.test</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- LAB BOOKING VIEWS                                            -->
+    <!-- ============================================================ -->
+    
+    <record id="lab_booking_view_list" model="ir.ui.view">
+        <field name="name">lab.booking.list</field>
+        <field name="model">lab.booking</field>
+        <field name="arch" type="xml">
+            <list string="Lab Bookings">
+                <field name="name"/>
+                <field name="booking_date"/>
+                <field name="patient_id"/>
+                <field name="lab_id"/>
+                <field name="collection_type"/>
+                <field name="total_amount"/>
+                <field name="payment_status" widget="badge"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="lab_booking_view_form" model="ir.ui.view">
+        <field name="name">lab.booking.form</field>
+        <field name="model">lab.booking</field>
+        <field name="arch" type="xml">
+            <form string="Lab Booking">
+                <header>
+                    <button name="action_confirm" string="Confirm" type="object" invisible="state != 'draft'"/>
+                    <button name="action_collect_sample" string="Sample Collected" type="object" invisible="state != 'confirmed'"/>
+                    <button name="action_process" string="Process" type="object" invisible="state != 'sample_collected'"/>
+                    <button name="action_complete" string="Complete" type="object" class="btn-success" invisible="state != 'processing'"/>
+                    <button name="action_cancel" string="Cancel" type="object" invisible="state not in ('draft', 'confirmed')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="patient_id"/>
+                            <field name="lab_id"/>
+                            <field name="booking_date"/>
+                        </group>
+                        <group>
+                            <field name="collection_type"/>
+                            <field name="collection_date"/>
+                            <field name="collection_address" invisible="collection_type != 'home'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Tests" name="tests">
+                            <field name="test_ids" widget="many2many_tags"/>
+                        </page>
+                        <page string="Payment" name="payment">
+                            <group>
+                                <group>
+                                    <field name="subtotal"/>
+                                    <field name="collection_fee"/>
+                                    <field name="discount"/>
+                                    <field name="total_amount"/>
+                                </group>
+                                <group>
+                                    <field name="payment_status"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Report" name="report" invisible="state != 'completed'">
+                            <group>
+                                <field name="report_file" filename="report_filename"/>
+                                <field name="report_filename" invisible="1"/>
+                                <field name="report_date"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="lab_booking_action" model="ir.actions.act_window">
+        <field name="name">Lab Bookings</field>
+        <field name="res_model">lab.booking</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- PHARMACY ORDER VIEWS                                         -->
+    <!-- ============================================================ -->
+    
+    <record id="pharmacy_order_view_list" model="ir.ui.view">
+        <field name="name">pharmacy.order.list</field>
+        <field name="model">pharmacy.order</field>
+        <field name="arch" type="xml">
+            <list string="Pharmacy Orders">
+                <field name="name"/>
+                <field name="create_date"/>
+                <field name="patient_id"/>
+                <field name="pharmacy_id"/>
+                <field name="delivery_type"/>
+                <field name="total_amount"/>
+                <field name="payment_status" widget="badge"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="pharmacy_order_view_form" model="ir.ui.view">
+        <field name="name">pharmacy.order.form</field>
+        <field name="model">pharmacy.order</field>
+        <field name="arch" type="xml">
+            <form string="Pharmacy Order">
+                <header>
+                    <button name="action_confirm" string="Confirm" type="object" invisible="state != 'draft'"/>
+                    <button name="action_process" string="Process" type="object" invisible="state != 'confirmed'"/>
+                    <button name="action_ready" string="Ready" type="object" invisible="state != 'processing'"/>
+                    <button name="action_dispatch" string="Dispatch" type="object" invisible="state != 'ready'"/>
+                    <button name="action_deliver" string="Delivered" type="object" class="btn-success" invisible="state != 'dispatched'"/>
+                    <button name="action_cancel" string="Cancel" type="object" invisible="state not in ('draft', 'confirmed')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="patient_id"/>
+                            <field name="pharmacy_id"/>
+                            <field name="appointment_id"/>
+                        </group>
+                        <group>
+                            <field name="delivery_type"/>
+                            <field name="delivery_date"/>
+                            <field name="prescription_verified"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Items" name="items">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="medicine_name"/>
+                                    <field name="quantity"/>
+                                    <field name="unit_price"/>
+                                    <field name="subtotal"/>
+                                    <field name="is_available"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Prescription" name="prescription">
+                            <group>
+                                <field name="prescription_image" widget="image"/>
+                            </group>
+                        </page>
+                        <page string="Delivery" name="delivery">
+                            <group>
+                                <field name="delivery_address"/>
+                            </group>
+                        </page>
+                        <page string="Payment" name="payment">
+                            <group>
+                                <group>
+                                    <field name="subtotal"/>
+                                    <field name="delivery_fee"/>
+                                    <field name="discount"/>
+                                    <field name="total_amount"/>
+                                </group>
+                                <group>
+                                    <field name="payment_status"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="pharmacy_order_action" model="ir.actions.act_window">
+        <field name="name">Pharmacy Orders</field>
+        <field name="res_model">pharmacy.order</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

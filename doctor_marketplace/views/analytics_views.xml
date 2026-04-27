@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Platform KPI Views -->
+    <record id="view_platform_kpi_form" model="ir.ui.view">
+        <field name="name">platform.kpi.form</field>
+        <field name="model">platform.kpi</field>
+        <field name="arch" type="xml">
+            <form string="Platform KPI">
+                <sheet>
+                    <group>
+                        <group string="Period">
+                            <field name="date"/>
+                            <field name="kpi_type"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Appointments" name="appointments">
+                            <group>
+                                <group>
+                                    <field name="appointments_booked"/>
+                                    <field name="appointments_completed"/>
+                                    <field name="appointments_cancelled"/>
+                                    <field name="appointments_no_show"/>
+                                </group>
+                                <group>
+                                    <field name="completion_rate" widget="progressbar"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Revenue" name="revenue">
+                            <group>
+                                <group>
+                                    <field name="gross_revenue"/>
+                                    <field name="platform_commission"/>
+                                    <field name="net_doctor_payouts"/>
+                                </group>
+                                <group>
+                                    <field name="average_consultation_fee"/>
+                                    <field name="subscription_revenue"/>
+                                    <field name="corporate_revenue"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Users" name="users">
+                            <group>
+                                <group>
+                                    <field name="new_patients"/>
+                                    <field name="active_patients"/>
+                                    <field name="new_doctors"/>
+                                    <field name="active_doctors"/>
+                                </group>
+                                <group>
+                                    <field name="new_subscriptions"/>
+                                    <field name="active_subscriptions"/>
+                                    <field name="churn_count"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Insurance" name="insurance">
+                            <group>
+                                <group>
+                                    <field name="insurance_claims_submitted"/>
+                                    <field name="insurance_claims_approved"/>
+                                </group>
+                                <group>
+                                    <field name="insurance_amount_claimed"/>
+                                    <field name="insurance_amount_settled"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Engagement" name="engagement">
+                            <group>
+                                <group>
+                                    <field name="reviews_submitted"/>
+                                    <field name="average_rating"/>
+                                </group>
+                                <group>
+                                    <field name="waitlist_conversions"/>
+                                    <field name="corporate_appointments"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_platform_kpi_list" model="ir.ui.view">
+        <field name="name">platform.kpi.list</field>
+        <field name="model">platform.kpi</field>
+        <field name="arch" type="xml">
+            <list string="Platform KPIs">
+                <field name="date"/>
+                <field name="kpi_type"/>
+                <field name="appointments_booked"/>
+                <field name="appointments_completed"/>
+                <field name="completion_rate" widget="progressbar"/>
+                <field name="gross_revenue" sum="Total Revenue"/>
+                <field name="platform_commission" sum="Total Commission"/>
+                <field name="new_patients"/>
+                <field name="average_rating"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_platform_kpi_search" model="ir.ui.view">
+        <field name="name">platform.kpi.search</field>
+        <field name="model">platform.kpi</field>
+        <field name="arch" type="xml">
+            <search string="Search KPIs">
+                <field name="date"/>
+                <filter name="daily" string="Daily" domain="[('kpi_type', '=', 'daily')]"/>
+                <filter name="weekly" string="Weekly" domain="[('kpi_type', '=', 'weekly')]"/>
+                <filter name="monthly" string="Monthly" domain="[('kpi_type', '=', 'monthly')]"/>
+                <filter name="this_month" string="This Month" 
+                        domain="[('date', '&gt;=', (context_today().replace(day=1)).strftime('%Y-%m-%d'))]"/>
+                <filter name="last_month" string="Last Month"
+                        domain="[('date', '&gt;=', (context_today() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter name="group_type" string="KPI Type" context="{'group_by': 'kpi_type'}"/>
+                <filter name="group_month" string="Month" context="{'group_by': 'date:month'}"/>
+
+            </search>
+        </field>
+    </record>
+
+    <record id="view_platform_kpi_graph" model="ir.ui.view">
+        <field name="name">platform.kpi.graph</field>
+        <field name="model">platform.kpi</field>
+        <field name="arch" type="xml">
+            <graph string="KPI Trends" type="line">
+                <field name="date" type="row"/>
+                <field name="gross_revenue" type="measure"/>
+                <field name="appointments_completed" type="measure"/>
+                <field name="new_patients" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_platform_kpi_pivot" model="ir.ui.view">
+        <field name="name">platform.kpi.pivot</field>
+        <field name="model">platform.kpi</field>
+        <field name="arch" type="xml">
+            <pivot string="KPI Analysis">
+                <field name="date" type="row" interval="month"/>
+                <field name="kpi_type" type="col"/>
+                <field name="gross_revenue" type="measure"/>
+                <field name="appointments_completed" type="measure"/>
+                <field name="platform_commission" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_platform_kpi" model="ir.actions.act_window">
+        <field name="name">Platform KPIs</field>
+        <field name="res_model">platform.kpi</field>
+        <field name="view_mode">list,form,graph,pivot</field>
+        <field name="context">{'search_default_daily': 1}</field>
+    </record>
+
+    <!-- Doctor Performance Report Views -->
+    <record id="view_doctor_performance_report_list" model="ir.ui.view">
+        <field name="name">doctor.performance.report.list</field>
+        <field name="model">doctor.performance.report</field>
+        <field name="arch" type="xml">
+            <list string="Doctor Performance">
+                <field name="doctor_name"/>
+                <field name="specialization"/>
+                <field name="period"/>
+                <field name="total_appointments"/>
+                <field name="completed_appointments"/>
+                <field name="completion_rate" widget="progressbar"/>
+                <field name="gross_earnings" sum="Total Earnings"/>
+                <field name="net_earnings" sum="Net Earnings"/>
+                <field name="average_rating"/>
+                <field name="patients_served"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_doctor_performance_report_search" model="ir.ui.view">
+        <field name="name">doctor.performance.report.search</field>
+        <field name="model">doctor.performance.report</field>
+        <field name="arch" type="xml">
+            <search string="Search Performance">
+                <field name="doctor_name"/>
+                <field name="specialization"/>
+                <separator/>
+                <filter name="group_doctor" string="Doctor" context="{'group_by': 'doctor_id'}"/>
+                <filter name="group_spec" string="Specialization" context="{'group_by': 'specialization'}"/>
+                <filter name="group_period" string="Period" context="{'group_by': 'period:month'}"/>
+
+            </search>
+        </field>
+    </record>
+
+    <record id="view_doctor_performance_report_graph" model="ir.ui.view">
+        <field name="name">doctor.performance.report.graph</field>
+        <field name="model">doctor.performance.report</field>
+        <field name="arch" type="xml">
+            <graph string="Doctor Performance" type="bar">
+                <field name="doctor_name" type="row"/>
+                <field name="gross_earnings" type="measure"/>
+                <field name="completed_appointments" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_doctor_performance_report_pivot" model="ir.ui.view">
+        <field name="name">doctor.performance.report.pivot</field>
+        <field name="model">doctor.performance.report</field>
+        <field name="arch" type="xml">
+            <pivot string="Performance Analysis">
+                <field name="doctor_name" type="row"/>
+                <field name="period" type="col" interval="month"/>
+                <field name="gross_earnings" type="measure"/>
+                <field name="completed_appointments" type="measure"/>
+                <field name="average_rating" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_doctor_performance_report" model="ir.actions.act_window">
+        <field name="name">Doctor Performance</field>
+        <field name="res_model">doctor.performance.report</field>
+        <field name="view_mode">pivot,graph,list</field>
+    </record>
+
+    <!-- Revenue Analysis Report Views -->
+    <record id="view_revenue_analysis_report_list" model="ir.ui.view">
+        <field name="name">revenue.analysis.report.list</field>
+        <field name="model">revenue.analysis.report</field>
+        <field name="arch" type="xml">
+            <list string="Revenue Analysis">
+                <field name="period"/>
+                <field name="consultation_revenue" sum="Total Consultation"/>
+                <field name="video_consultation_revenue" sum="Total Video"/>
+                <field name="followup_revenue" sum="Total Follow-up"/>
+                <field name="corporate_revenue" sum="Total Corporate"/>
+                <field name="total_revenue" sum="Grand Total"/>
+                <field name="platform_commission" sum="Total Commission"/>
+                <field name="total_transactions"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_revenue_analysis_report_graph" model="ir.ui.view">
+        <field name="name">revenue.analysis.report.graph</field>
+        <field name="model">revenue.analysis.report</field>
+        <field name="arch" type="xml">
+            <graph string="Revenue Trends" type="line">
+                <field name="period" type="row"/>
+                <field name="total_revenue" type="measure"/>
+                <field name="platform_commission" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_revenue_analysis_report_pivot" model="ir.ui.view">
+        <field name="name">revenue.analysis.report.pivot</field>
+        <field name="model">revenue.analysis.report</field>
+        <field name="arch" type="xml">
+            <pivot string="Revenue Breakdown">
+                <field name="period" type="row" interval="month"/>
+                <field name="consultation_revenue" type="measure"/>
+                <field name="video_consultation_revenue" type="measure"/>
+                <field name="corporate_revenue" type="measure"/>
+                <field name="total_revenue" type="measure"/>
+                <field name="platform_commission" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_revenue_analysis_report" model="ir.actions.act_window">
+        <field name="name">Revenue Analysis</field>
+        <field name="res_model">revenue.analysis.report</field>
+        <field name="view_mode">pivot,graph,list</field>
+    </record>
+
+    <!-- Patient Analytics Report Views -->
+    <record id="view_patient_analytics_report_list" model="ir.ui.view">
+        <field name="name">patient.analytics.report.list</field>
+        <field name="model">patient.analytics.report</field>
+        <field name="arch" type="xml">
+            <list string="Patient Analytics">
+                <field name="period"/>
+                <field name="new_registrations"/>
+                <field name="active_patients"/>
+                <field name="returning_patients"/>
+                <field name="total_appointments"/>
+                <field name="avg_appointments_per_patient"/>
+                <field name="total_spent" sum="Total Spent"/>
+                <field name="avg_spend_per_patient"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_patient_analytics_report_graph" model="ir.ui.view">
+        <field name="name">patient.analytics.report.graph</field>
+        <field name="model">patient.analytics.report</field>
+        <field name="arch" type="xml">
+            <graph string="Patient Trends" type="line">
+                <field name="period" type="row"/>
+                <field name="new_registrations" type="measure"/>
+                <field name="active_patients" type="measure"/>
+                <field name="total_spent" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_patient_analytics_report" model="ir.actions.act_window">
+        <field name="name">Patient Analytics</field>
+        <field name="res_model">patient.analytics.report</field>
+        <field name="view_mode">graph,list</field>
+    </record>
+
+</odoo>

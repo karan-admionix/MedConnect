@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List View -->
+    <record id="patient_subscription_view_list" model="ir.ui.view">
+        <field name="name">patient.subscription.list</field>
+        <field name="model">patient.subscription</field>
+        <field name="arch" type="xml">
+            <list string="Patient Subscriptions">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="plan_id"/>
+                <field name="billing_cycle"/>
+                <field name="amount"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="free_consultations_remaining"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="patient_subscription_view_form" model="ir.ui.view">
+        <field name="name">patient.subscription.form</field>
+        <field name="model">patient.subscription</field>
+        <field name="arch" type="xml">
+            <form string="Patient Subscription">
+                <header>
+                    <button name="action_activate" string="Activate" type="object" class="btn-success"
+                            invisible="state != 'draft'"/>
+                    <button name="action_pause" string="Pause" type="object" invisible="state != 'active'"/>
+                    <button name="action_cancel" string="Cancel" type="object" class="btn-danger"
+                            invisible="state not in ('draft', 'active', 'paused')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="patient_id"/>
+                            <field name="plan_id"/>
+                            <field name="billing_cycle"/>
+                            <field name="amount"/>
+                        </group>
+                        <group>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="next_billing_date"/>
+                            <field name="auto_renew"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="free_consultations_remaining"/>
+                    </group>
+                    <notebook>
+                        <page string="Payments" name="payments">
+                            <field name="payment_ids">
+                                <list>
+                                    <field name="payment_date"/>
+                                    <field name="amount"/>
+                                    <field name="payment_method"/>
+                                    <field name="payment_reference"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="patient_subscription_action" model="ir.actions.act_window">
+        <field name="name">Patient Subscriptions</field>
+        <field name="res_model">patient.subscription</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

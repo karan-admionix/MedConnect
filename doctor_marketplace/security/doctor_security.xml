@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- ============================================================ -->
+        <!-- MODULE CATEGORY                                               -->
+        <!-- ============================================================ -->
+        <record id="module_category_doctor_marketplace" model="ir.module.category">
+            <field name="name">MedConnect</field>
+            <field name="description">Healthcare marketplace for doctors and patients</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- SECURITY GROUPS                                               -->
+        <!-- ============================================================ -->
+
+        <!-- Public User -->
+        <record id="group_doctor_marketplace_public" model="res.groups">
+            <field name="name">MedConnect / Public User</field>
+            <field name="comment">Public website visitors</field>
+        </record>
+
+        <!-- Patient Portal -->
+        <record id="group_doctor_marketplace_patient" model="res.groups">
+            <field name="name">MedConnect / Patient Portal</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_portal'))]"/>
+            <field name="comment">Registered patients</field>
+        </record>
+
+        <!-- Doctor — internal user with limited access -->
+        <record id="group_doctor_marketplace_doctor" model="res.groups">
+            <field name="name">MedConnect / Doctor</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Approved doctors — can see own appointments and patients only</field>
+        </record>
+
+        <!-- Manager -->
+        <record id="group_doctor_marketplace_manager" model="res.groups">
+            <field name="name">MedConnect / Manager</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Staff managing the platform</field>
+        </record>
+
+        <!-- Administrator -->
+        <record id="group_doctor_marketplace_admin" model="res.groups">
+            <field name="name">MedConnect / Administrator</field>
+            <field name="implied_ids" eval="[(4, ref('group_doctor_marketplace_manager'))]"/>
+            <field name="comment">Full administrative access</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- RECORD RULES — Doctor sees only their own data               -->
+        <!-- ============================================================ -->
+
+        <!-- Doctor can only see appointments assigned to them -->
+        <record id="rule_doctor_appointment_own" model="ir.rule">
+            <field name="name">Doctor: Own Appointments Only</field>
+            <field name="model_id" ref="model_doctor_appointment"/>
+            <field name="groups" eval="[(4, ref('group_doctor_marketplace_doctor'))]"/>
+            <field name="domain_force">[('doctor_id.user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Doctor can only see patients who have appointments with them -->
+        <record id="rule_doctor_patient_own" model="ir.rule">
+            <field name="name">Doctor: Own Patients Only</field>
+            <field name="model_id" ref="model_doctor_patient"/>
+            <field name="groups" eval="[(4, ref('group_doctor_marketplace_doctor'))]"/>
+            <field name="domain_force">
+                [('appointment_ids.doctor_id.user_id', '=', user.id)]
+            </field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Doctor can only see their own doctor.doctor record -->
+        <record id="rule_doctor_own_profile" model="ir.rule">
+            <field name="name">Doctor: Own Profile Only</field>
+            <field name="model_id" ref="model_doctor_doctor"/>
+            <field name="groups" eval="[(4, ref('group_doctor_marketplace_doctor'))]"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Doctor can only see their own earnings -->
+        <record id="rule_doctor_earning_own" model="ir.rule">
+            <field name="name">Doctor: Own Earnings Only</field>
+            <field name="model_id" ref="model_doctor_earning"/>
+            <field name="groups" eval="[(4, ref('group_doctor_marketplace_doctor'))]"/>
+            <field name="domain_force">[('doctor_id.user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Doctor can only see their own reviews -->
+        <record id="rule_doctor_review_own" model="ir.rule">
+            <field name="name">Doctor: Own Reviews Only</field>
+            <field name="model_id" ref="model_doctor_review"/>
+            <field name="groups" eval="[(4, ref('group_doctor_marketplace_doctor'))]"/>
+            <field name="domain_force">[('doctor_id.user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Doctor can only see their own schedule -->
+        <record id="rule_doctor_schedule_own" model="ir.rule">
+            <field name="name">Doctor: Own Schedule Only</field>
+            <field name="model_id" ref="model_doctor_schedule"/>
+            <field name="groups" eval="[(4, ref('group_doctor_marketplace_doctor'))]"/>
+            <field name="domain_force">[('doctor_id.user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

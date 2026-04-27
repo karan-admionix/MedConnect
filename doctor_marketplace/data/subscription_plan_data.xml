@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Subscription Plans -->
+        <record id="subscription_plan_free" model="subscription.plan">
+            <field name="name">Free</field>
+            <field name="code">FREE</field>
+            <field name="sequence">1</field>
+            <field name="price">0</field>
+            <field name="annual_price">0</field>
+            <field name="free_consultations">0</field>
+            <field name="consultation_discount">0</field>
+            <field name="priority_booking">False</field>
+            <field name="video_consultation">False</field>
+            <field name="max_family_members">1</field>
+            <field name="health_records">False</field>
+            <field name="color">#9E9E9E</field>
+            <field name="icon">fa-user</field>
+            <field name="description">
+                <![CDATA[
+                <ul>
+                    <li>Book appointments online</li>
+                    <li>View doctor profiles</li>
+                    <li>Basic support</li>
+                </ul>
+                ]]>
+            </field>
+        </record>
+
+        <record id="subscription_plan_basic" model="subscription.plan">
+            <field name="name">Basic</field>
+            <field name="code">BASIC</field>
+            <field name="sequence">2</field>
+            <field name="price">199</field>
+            <field name="annual_price">1999</field>
+            <field name="free_consultations">1</field>
+            <field name="consultation_discount">5</field>
+            <field name="priority_booking">False</field>
+            <field name="video_consultation">False</field>
+            <field name="max_family_members">2</field>
+            <field name="health_records">True</field>
+            <field name="color">#2196F3</field>
+            <field name="icon">fa-star</field>
+            <field name="description">
+                <![CDATA[
+                <ul>
+                    <li>1 Free consultation/month</li>
+                    <li>5% discount on all consultations</li>
+                    <li>Health records storage</li>
+                    <li>Add up to 2 family members</li>
+                </ul>
+                ]]>
+            </field>
+        </record>
+
+        <record id="subscription_plan_family" model="subscription.plan">
+            <field name="name">Family</field>
+            <field name="code">FAMILY</field>
+            <field name="sequence">3</field>
+            <field name="price">499</field>
+            <field name="annual_price">4999</field>
+            <field name="free_consultations">3</field>
+            <field name="consultation_discount">10</field>
+            <field name="priority_booking">True</field>
+            <field name="video_consultation">True</field>
+            <field name="max_family_members">5</field>
+            <field name="health_records">True</field>
+            <field name="featured">True</field>
+            <field name="color">#4CAF50</field>
+            <field name="icon">fa-users</field>
+            <field name="description">
+                <![CDATA[
+                <ul>
+                    <li>3 Free consultations/month</li>
+                    <li>10% discount on all consultations</li>
+                    <li>Priority booking</li>
+                    <li>Free video consultations</li>
+                    <li>Add up to 5 family members</li>
+                    <li>Health records for all members</li>
+                </ul>
+                ]]>
+            </field>
+        </record>
+
+        <record id="subscription_plan_premium" model="subscription.plan">
+            <field name="name">Premium</field>
+            <field name="code">PREMIUM</field>
+            <field name="sequence">4</field>
+            <field name="price">999</field>
+            <field name="annual_price">9999</field>
+            <field name="free_consultations">5</field>
+            <field name="consultation_discount">20</field>
+            <field name="priority_booking">True</field>
+            <field name="video_consultation">True</field>
+            <field name="max_family_members">10</field>
+            <field name="health_records">True</field>
+            <field name="color">#FF9800</field>
+            <field name="icon">fa-crown</field>
+            <field name="description">
+                <![CDATA[
+                <ul>
+                    <li>5 Free consultations/month</li>
+                    <li>20% discount on all consultations</li>
+                    <li>Priority booking</li>
+                    <li>Unlimited video consultations</li>
+                    <li>Add up to 10 family members</li>
+                    <li>Priority support</li>
+                    <li>Health records for all members</li>
+                </ul>
+                ]]>
+            </field>
+        </record>
+
+    </data>
+</odoo>

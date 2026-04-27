@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List View -->
+    <record id="doctor_waitlist_view_list" model="ir.ui.view">
+        <field name="name">doctor.waitlist.list</field>
+        <field name="model">doctor.waitlist</field>
+        <field name="arch" type="xml">
+            <list string="Waitlist">
+                <field name="name"/>
+                <field name="create_date"/>
+                <field name="doctor_id"/>
+                <field name="patient_id"/>
+                <field name="preferred_date"/>
+                <field name="date_flexibility"/>
+                <field name="time_preference"/>
+                <field name="priority"/>
+                <field name="auto_book"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="doctor_waitlist_view_form" model="ir.ui.view">
+        <field name="name">doctor.waitlist.form</field>
+        <field name="model">doctor.waitlist</field>
+        <field name="arch" type="xml">
+            <form string="Waitlist Entry">
+                <header>
+                    <button name="action_notify" string="Notify Patient" type="object" class="btn-primary"
+                            invisible="state != 'waiting'"
+                            groups="doctor_marketplace.group_doctor_marketplace_manager"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            invisible="state not in ('waiting', 'notified')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="doctor_id"/>
+                            <field name="patient_id"/>
+                            <field name="priority"/>
+                        </group>
+                        <group>
+                            <field name="preferred_date"/>
+                            <field name="date_flexibility"/>
+                            <field name="time_preference"/>
+                            <field name="expiry_date"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="auto_book"/>
+                            <field name="max_price" invisible="not auto_book"/>
+                        </group>
+                        <group>
+                            <field name="notify_email"/>
+                            <field name="notify_sms"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="reason"/>
+                    </group>
+                    <group string="Result" invisible="state in ('waiting', 'cancelled')">
+                        <group>
+                            <field name="notified_date"/>
+                            <field name="booked_date"/>
+                            <field name="appointment_id"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="doctor_waitlist_action" model="ir.actions.act_window">
+        <field name="name">Waitlist</field>
+        <field name="res_model">doctor.waitlist</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

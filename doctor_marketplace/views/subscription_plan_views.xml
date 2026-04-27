@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List View -->
+    <record id="subscription_plan_view_list" model="ir.ui.view">
+        <field name="name">subscription.plan.list</field>
+        <field name="model">subscription.plan</field>
+        <field name="arch" type="xml">
+            <list string="Subscription Plans">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="price"/>
+                <field name="annual_price"/>
+                <field name="free_consultations"/>
+                <field name="consultation_discount"/>
+                <field name="featured"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="subscription_plan_view_form" model="ir.ui.view">
+        <field name="name">subscription.plan.form</field>
+        <field name="model">subscription.plan</field>
+        <field name="arch" type="xml">
+            <form string="Subscription Plan">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Plan Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Pricing">
+                            <field name="code"/>
+                            <field name="price"/>
+                            <field name="annual_price"/>
+                            <field name="annual_discount"/>
+                        </group>
+                        <group string="Settings">
+                            <field name="sequence"/>
+                            <field name="featured"/>
+                            <field name="active"/>
+                            <field name="color"/>
+                            <field name="icon"/>
+                        </group>
+                    </group>
+                    <group string="Benefits">
+                        <group>
+                            <field name="free_consultations"/>
+                            <field name="consultation_discount"/>
+                            <field name="max_family_members"/>
+                        </group>
+                        <group>
+                            <field name="priority_booking"/>
+                            <field name="video_consultation"/>
+                            <field name="health_records"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="subscription_plan_action" model="ir.actions.act_window">
+        <field name="name">Subscription Plans</field>
+        <field name="res_model">subscription.plan</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

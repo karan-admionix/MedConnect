@@ -1,0 +1,606 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- 1. APPOINTMENT BOOKING FORM                                  -->
+    <!--    URL: /book-appointment/<doctor_id>                        -->
+    <!-- ============================================================ -->
+    <template id="website_appointment_booking" name="MedConnect - Book Appointment">
+        <t t-call="website.layout">
+            <div id="wrap" class="medconnect-page">
+                <div class="container mc-booking-container">
+
+                    <!-- Breadcrumb -->
+                    <nav class="mc-breadcrumb">
+                        <a href="/">Home</a>
+                        /
+                        <a href="/doctors">Doctors</a>
+                        /
+                        <a t-attf-href="/doctors/#{doctor.id}">Dr.
+                            <t t-out="doctor.name"/>
+                        </a>
+                        /
+                        <span>Book Appointment</span>
+                    </nav>
+
+                    <div class="mc-booking-layout">
+
+                        <!-- LEFT — Doctor Summary Card -->
+                        <aside class="mc-booking-doctor-card">
+                            <div class="mc-booking-doctor-photo">
+                                <t t-if="doctor.image">
+                                    <img t-attf-src="/web/image/doctor.doctor/#{doctor.id}/image/120x120"
+                                         t-att-alt="doctor.name" class="mc-avatar"/>
+                                </t>
+                                <t t-else="">
+                                    <div class="mc-avatar-placeholder">
+                                        <i class="fa fa-user-md fa-3x"/>
+                                    </div>
+                                </t>
+                            </div>
+                            <h3 class="mc-booking-doctor-name">Dr.
+                                <t t-out="doctor.name"/>
+                            </h3>
+                            <p class="mc-booking-doctor-spec">
+                                <t t-out="doctor.specialization_id.name or ''"/>
+                            </p>
+                            <t t-if="doctor.city">
+                                <p class="mc-booking-doctor-loc">
+                                    <i class="fa fa-map-marker"/>
+                                    <t t-out="doctor.city"/>
+                                </p>
+                            </t>
+                            <div class="mc-booking-fee-row">
+                                <span class="mc-fee-label">Consultation Fee</span>
+                                <span class="mc-booking-fee">₹
+                                    <t t-out="'%.0f' % doctor.consultation_fee"/>
+                                </span>
+                            </div>
+                            <t t-if="doctor.offers_video">
+                                <div class="mc-booking-fee-row">
+                                    <span class="mc-fee-label">Video Fee</span>
+                                    <span class="mc-booking-fee">₹
+                                        <t t-out="'%.0f' % doctor.video_fee"/>
+                                    </span>
+                                </div>
+                            </t>
+                        </aside>
+
+                        <!-- RIGHT — Booking Form -->
+                        <main class="mc-booking-form-wrap">
+
+                            <h2 class="mc-booking-title">Book an Appointment</h2>
+                            <p class="mc-booking-subtitle">
+                                Select your preferred date and time to book your appointment.
+                            </p>
+
+                            <!-- General Error -->
+                            <t t-if="error.get('general')">
+                                <div class="mc-alert mc-alert-error">
+                                    <i class="fa fa-exclamation-circle"/>
+                                    <t t-out="error.get('general')"/>
+                                </div>
+                            </t>
+
+                            <form t-attf-action="/book-appointment/#{doctor.id}/confirm"
+                                  method="POST" class="mc-form" id="mc-booking-form">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                                <!-- Consultation Type -->
+                                <div class="mc-form-group"
+                                     t-att-class="'mc-has-error' if error.get('consultation_type') else ''">
+                                    <label class="mc-label">Consultation Type
+                                        <span class="mc-required">*</span>
+                                    </label>
+                                    <div class="mc-radio-group">
+                                        <label class="mc-radio-label">
+                                            <input type="radio" name="consultation_type" value="new"
+                                                   t-att-checked="form_data.get('consultation_type', 'new') == 'new'"/>
+                                            New Consultation
+                                            <span class="mc-fee-inline">₹
+                                                <t t-out="'%.0f' % doctor.consultation_fee"/>
+                                            </span>
+                                        </label>
+                                        <t t-if="doctor.followup_fee">
+                                            <label class="mc-radio-label">
+                                                <input type="radio" name="consultation_type" value="followup"
+                                                       t-att-checked="form_data.get('consultation_type') == 'followup'"/>
+                                                Follow-up
+                                                <span class="mc-fee-inline">₹
+                                                    <t t-out="'%.0f' % doctor.followup_fee"/>
+                                                </span>
+                                            </label>
+                                        </t>
+                                    </div>
+                                </div>
+
+                                <!-- Consultation Mode -->
+                                <div class="mc-form-group">
+                                    <label class="mc-label">Mode of Consultation</label>
+                                    <div class="mc-radio-group">
+                                        <label class="mc-radio-label">
+                                            <input type="radio" name="consultation_mode" value="in_person"
+                                                   t-att-checked="form_data.get('consultation_mode', 'in_person') == 'in_person'"/>
+                                            <i class="fa fa-hospital-o"/>
+                                            In-Person
+                                        </label>
+                                        <t t-if="doctor.offers_video">
+                                            <label class="mc-radio-label">
+                                                <input type="radio" name="consultation_mode" value="video"
+                                                       t-att-checked="form_data.get('consultation_mode') == 'video'"/>
+                                                <i class="fa fa-video-camera"/>
+                                                Video Call
+                                            </label>
+                                        </t>
+                                        <t t-if="doctor.offers_home_visit">
+                                            <label class="mc-radio-label">
+                                                <input type="radio" name="consultation_mode" value="home_visit"
+                                                       t-att-checked="form_data.get('consultation_mode') == 'home_visit'"/>
+                                                <i class="fa fa-home"/>
+                                                Home Visit
+                                            </label>
+                                        </t>
+                                    </div>
+                                </div>
+
+                                <!-- Date Picker -->
+                                <div class="mc-form-group"
+                                     t-att-class="'mc-has-error' if error.get('appointment_date') else ''">
+                                    <label class="mc-label" for="appointment_date">
+                                        Preferred Date
+                                        <span class="mc-required">*</span>
+                                    </label>
+                                    <input type="date" name="appointment_date" id="appointment_date"
+                                           class="mc-input"
+                                           t-att-value="form_data.get('appointment_date', '')"
+                                           t-att-min="(datetime.date.today()).strftime('%Y-%m-%d')"
+                                           t-att-max="(datetime.date.today() + datetime.timedelta(days=doctor.advance_booking_days or 30)).strftime('%Y-%m-%d')"
+                                    />
+                                    <t t-if="error.get('appointment_date')">
+                                        <span class="mc-error-msg">
+                                            <t t-out="error['appointment_date']"/>
+                                        </span>
+                                    </t>
+                                </div>
+
+                                <!-- Time Slot Picker (populated by AJAX) -->
+                                <div class="mc-form-group"
+                                     t-att-class="'mc-has-error' if error.get('appointment_time') else ''">
+                                    <label class="mc-label" for="appointment_time">
+                                        Preferred Time
+                                        <span class="mc-required">*</span>
+                                    </label>
+                                    <select name="appointment_time" id="appointment_time" class="mc-input"
+                                            disabled="disabled">
+                                        <option value="">— Select a date first —</option>
+                                    </select>
+                                    <p class="mc-slot-hint" id="mc-slot-hint" style="display:none;">
+                                        Loading available slots...
+                                    </p>
+                                    <t t-if="error.get('appointment_time')">
+                                        <span class="mc-error-msg">
+                                            <t t-out="error['appointment_time']"/>
+                                        </span>
+                                    </t>
+                                </div>
+
+                                <!-- Reason / Symptoms -->
+                                <div class="mc-form-group">
+                                    <label class="mc-label" for="reason">Reason for Visit</label>
+                                    <textarea name="reason" id="reason" class="mc-textarea" rows="2"
+                                              placeholder="Briefly describe the reason for this visit...">
+                                        <t t-out="form_data.get('reason', '')"/>
+                                    </textarea>
+                                </div>
+
+                                <div class="mc-form-group">
+                                    <label class="mc-label" for="symptoms">Symptoms (if any)</label>
+                                    <textarea name="symptoms" id="symptoms" class="mc-textarea" rows="2"
+                                              placeholder="List your symptoms...">
+                                        <t t-out="form_data.get('symptoms', '')"/>
+                                    </textarea>
+                                </div>
+
+                                <!-- Guest: show login/signup prompt instead of form fields -->
+                                <t t-if="request.env.user._is_public()">
+                                    <div class="mc-guest-section" style="text-align:center; padding: 24px 16px;">
+                                        <i class="fa fa-lock fa-2x" style="color:#6c757d; margin-bottom:12px;"/>
+                                        <h4 class="mc-section-title">Login Required</h4>
+                                        <p class="mc-section-hint">Please log in or create an account to confirm your booking.</p>
+                                    </div>
+                                </t>
+
+                                <div class="mc-form-submit">
+                                    <a t-attf-href="/doctors/#{doctor.id}" class="mc-btn mc-btn-outline">Cancel</a>
+                                    <t t-if="request.env.user._is_public()">
+                                        <a t-attf-href="/web/login?redirect=/book-appointment/#{doctor.id}"
+                                           class="mc-btn mc-btn-primary mc-btn-lg">
+                                            <i class="fa fa-sign-in"/> Log in to Book
+                                        </a>
+                                    </t>
+                                    <t t-else="">
+                                        <button type="submit" class="mc-btn mc-btn-primary mc-btn-lg">
+                                            Confirm Booking
+                                            <i class="fa fa-arrow-right"/>
+                                        </button>
+                                    </t>
+                                </div>
+                                <t t-if="request.env.user._is_public()">
+                                    <p style="text-align:center; margin-top:10px; font-size:13px; color:#666;">
+                                        New patient?
+                                        <t t-if="signup_enabled">
+                                            <a t-attf-href="/web/signup?redirect=/book-appointment/#{doctor.id}">Create a free account</a>
+                                        </t>
+                                        <t t-else="">
+                                            <a t-attf-href="/web/login?redirect=/book-appointment/#{doctor.id}">Register here</a>
+                                        </t>
+                                    </p>
+                                </t>
+
+                            </form>
+                        </main>
+
+                    </div>
+                </div>
+
+                <!-- AJAX Slot Loader Script -->
+                <script type="text/javascript">
+                    (function () {
+                    var dateInput = document.getElementById('appointment_date');
+                    var timeSelect = document.getElementById('appointment_time');
+                    var slotHint = document.getElementById('mc-slot-hint');
+                    var doctorId =<t t-out="doctor.id"/>;
+
+                    if (!dateInput || !timeSelect) return;
+
+                    dateInput.addEventListener('change', function () {
+                    var selectedDate = dateInput.value;
+                    if (!selectedDate) return;
+
+                    // Show loading state
+                    timeSelect.disabled = true;
+                    timeSelect.innerHTML = '<option value="">Loading slots...</option>';
+                    slotHint.style.display = 'block';
+
+                    fetch('/book-appointment/slots', {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                    jsonrpc: '2.0',
+                    method: 'call',
+                    params: {
+                    doctor_id: doctorId,
+                    appointment_date: selectedDate
+                    }
+                    })
+                    })
+                    .then(function (response) { return response.json(); })
+                    .then(function (data) {
+                    slotHint.style.display = 'none';
+                    var slots = (data.result &amp;&amp; data.result.slots) ? data.result.slots : [];
+                    if (slots.length === 0) {
+                    timeSelect.innerHTML = '<option value="">No slots available for this date</option>';
+                    timeSelect.disabled = true;
+                    } else {
+                    timeSelect.innerHTML = '<option value="">-- Select a time slot --</option>';
+                    slots.forEach(function (slot) {
+                    var opt = document.createElement('option');
+                    opt.value = slot.value;
+                    opt.textContent = slot.label;
+                    timeSelect.appendChild(opt);
+                    });
+                    timeSelect.disabled = false;
+                    }
+                    })
+                    .catch(function () {
+                    slotHint.style.display = 'none';
+                    timeSelect.innerHTML = '<option value="">Error loading slots. Please try again.</option>';
+                    timeSelect.disabled = false;
+                    });
+                    });
+                    })();
+                </script>
+
+            </div>
+        </t>
+    </template>
+
+
+    <!-- ============================================================ -->
+    <!-- 2. APPOINTMENT BOOKING SUCCESS                               -->
+    <!-- ============================================================ -->
+    <template id="website_appointment_success" name="MedConnect - Appointment Booked">
+        <t t-call="website.layout">
+            <div id="wrap" class="medconnect-page">
+                <div class="container mc-success-container">
+                    <div class="mc-success-card">
+                        <div class="mc-success-icon mc-success-icon-blue">
+                            <i class="fa fa-calendar-check-o"/>
+                        </div>
+                        <h1 class="mc-success-title">Appointment Booked!</h1>
+                        <p class="mc-success-msg">
+                            Your appointment with
+                            <strong>Dr.
+                                <t t-out="doctor.name"/>
+                            </strong>
+                            has been booked.
+                        </p>
+
+                        <div class="mc-booking-summary">
+                            <div class="mc-summary-row">
+                                <span class="mc-summary-label">Reference</span>
+                                <span class="mc-summary-value">
+                                    <t t-out="appointment.name"/>
+                                </span>
+                            </div>
+                            <div class="mc-summary-row">
+                                <span class="mc-summary-label">Doctor</span>
+                                <span class="mc-summary-value">Dr.
+                                    <t t-out="appointment.doctor_id.name"/>
+                                </span>
+                            </div>
+                            <div class="mc-summary-row">
+                                <span class="mc-summary-label">Date</span>
+                                <span class="mc-summary-value">
+                                    <t t-out="appointment.appointment_date"/>
+                                </span>
+                            </div>
+                            <div class="mc-summary-row">
+                                <span class="mc-summary-label">Time</span>
+                                <span class="mc-summary-value">
+                                    <t t-out="appointment.appointment_time_display"/>
+                                </span>
+                            </div>
+                            <div class="mc-summary-row">
+                                <span class="mc-summary-label">Type</span>
+                                <span class="mc-summary-value">
+                                    <t t-out="dict(appointment._fields['consultation_type'].selection).get(appointment.consultation_type, '')"/>
+                                </span>
+                            </div>
+                            <div class="mc-summary-row">
+                                <span class="mc-summary-label">Mode</span>
+                                <span class="mc-summary-value">
+                                    <t t-out="dict(appointment._fields['consultation_mode'].selection).get(appointment.consultation_mode, '')"/>
+                                </span>
+                            </div>
+                            <div class="mc-summary-row">
+                                <span class="mc-summary-label">Status</span>
+                                <span class="mc-summary-value mc-status-badge">Draft — awaiting confirmation</span>
+                            </div>
+                            <div class="mc-summary-row">
+                                <span class="mc-summary-label">Fee</span>
+                                <span class="mc-summary-value">₹
+                                    <t t-out="'%.0f' % appointment.consultation_fee"/>
+                                </span>
+                            </div>
+                        </div>
+
+                        <p class="mc-success-note">
+                            You will receive a confirmation once the doctor confirms your slot.
+                        </p>
+
+                        <div class="mc-success-actions">
+                            <a href="/doctors" class="mc-btn mc-btn-outline">Browse More Doctors</a>
+                            <a href="/" class="mc-btn mc-btn-primary">Back to Home</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- 3. PATIENT PORTAL — My Appointments                         -->
+    <!--    URL: /my/appointments                                     -->
+    <!-- ============================================================ -->
+    <template id="portal_my_appointments" name="MedConnect - My Appointments">
+        <t t-call="website.layout">
+            <div id="wrap" class="medconnect-page">
+                <div class="container" style="padding: 40px 15px;">
+
+                    <h1 style="margin-bottom: 8px;">My Appointments</h1>
+                    <p style="color: #666; margin-bottom: 30px;">
+                        View and track all your booked appointments.
+                    </p>
+
+                    <t t-if="not appointments">
+                        <div class="mc-no-results" style="text-align:center; padding: 60px 0;">
+                            <i class="fa fa-calendar-o fa-3x" style="color:#ccc;"/>
+                            <h3 style="margin-top:16px;">No appointments yet</h3>
+                            <p>You haven't booked any appointments.</p>
+                            <a href="/doctors" class="mc-btn mc-btn-primary" style="margin-top:12px;">
+                                Find a Doctor
+                            </a>
+                        </div>
+                    </t>
+
+                    <t t-if="appointments">
+                        <table class="table table-hover" style="background:#fff; border-radius:8px; overflow:hidden;">
+                            <thead style="background:#f8f9fa;">
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Doctor</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Type</th>
+                                    <th>Mode</th>
+                                    <th>Fee (₹)</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="appointments" t-as="appt">
+                                    <tr>
+                                        <td>
+                                            <t t-out="appt.name"/>
+                                        </td>
+                                        <td>Dr.
+                                            <t t-out="appt.doctor_id.name"/>
+                                        </td>
+                                        <td>
+                                            <t t-out="appt.appointment_date"/>
+                                        </td>
+                                        <td>
+                                            <t t-out="appt.appointment_time_display"/>
+                                        </td>
+                                        <td>
+                                            <t t-out="dict(appt._fields['consultation_type'].selection).get(appt.consultation_type, '')"/>
+                                        </td>
+                                        <td>
+                                            <t t-out="dict(appt._fields['consultation_mode'].selection).get(appt.consultation_mode, '')"/>
+                                        </td>
+                                        <td>
+                                            <t t-out="'%.0f' % appt.consultation_fee"/>
+                                        </td>
+                                        <td>
+                                            <span t-attf-class="badge #{
+                                                'bg-warning text-dark' if appt.state == 'draft' else
+                                                'bg-success' if appt.state == 'confirmed' else
+                                                'bg-primary' if appt.state == 'completed' else
+                                                'bg-danger' if appt.state in ('cancelled', 'no_show') else
+                                                'bg-secondary'
+                                            }">
+                                                <t t-out="dict(appt._fields['state'].selection).get(appt.state, appt.state)"/>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- 4. PORTAL MENU ENTRY — Inject into /my/home                 -->
+    <!-- ============================================================ -->
+    <template id="portal_my_home_appointments" name="My Appointments"
+              inherit_id="portal.portal_my_home" priority="30">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon">/web/static/img/smile.svg</t>
+                <t t-set="title">Appointments</t>
+                <t t-set="url">/my/appointments</t>
+                <t t-set="placeholder_count" t-value="'appointment_count'"/>
+                <t t-set="text">View and track your booked appointments</t>
+            </t>
+        </xpath>
+    </template>
+
+
+    <!-- ============================================================ -->\n    <!-- 5. PORTAL HOME ENTRY — Doctor Appointments                  -->\n    <!--    Injects into /my/home; only visible when count > 0        -->\n    <!-- ============================================================ -->
+    <template id="portal_my_home_doctor_appointments"
+              name="Doctor - My Patient Appointments"
+              inherit_id="portal.portal_my_home"
+              priority="35">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'/web/static/img/smile.svg'"/>
+                <t t-set="title">My Patient Appointments</t>
+                <t t-set="url" t-value="'/my/doctor-appointments'"/>
+                <t t-set="placeholder_count" t-value="'doctor_appointment_count'"/>
+                <t t-set="text">View and manage your scheduled patient consultations</t>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- ============================================================ -->\n    <!-- 6. DOCTOR PORTAL — My Patient Appointments List            -->\n    <!--    URL: /my/doctor-appointments                             -->\n    <!-- ============================================================ -->
+    <template id="portal_doctor_appointments" name="Doctor - My Patient Appointments">
+        <t t-call="website.layout">
+            <div id="wrap" class="medconnect-page">
+                <div class="container" style="padding: 40px 15px;">
+
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb" style="margin-bottom: 20px;">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/my/home">My Account</a></li>
+                            <li class="breadcrumb-item active">My Patient Appointments</li>
+                        </ol>
+                    </nav>
+
+                    <h1 style="margin-bottom: 6px;">My Patient Appointments</h1>
+                    <p style="color: #666; margin-bottom: 30px;">
+                        All appointments booked with Dr. <t t-out="doctor.name"/>.
+                    </p>
+
+                    <!-- Empty state -->
+                    <t t-if="not appointments">
+                        <div style="text-align:center; padding: 60px 0;">
+                            <i class="fa fa-calendar-o fa-3x" style="color:#ccc;"/>
+                            <h3 style="margin-top:16px;">No appointments yet</h3>
+                            <p>No patients have booked appointments with you.</p>
+                        </div>
+                    </t>
+
+                    <!-- Appointments table -->
+                    <t t-if="appointments">
+                        <div class="table-responsive">
+                            <table class="table table-hover" style="background:#fff; border-radius:8px; overflow:hidden;">
+                                <thead style="background:#f8f9fa;">
+                                    <tr>
+                                        <th>Reference</th>
+                                        <th>Patient</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Type</th>
+                                        <th>Mode</th>
+                                        <th>Fee (₹)</th>
+                                        <th>Payment</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="appointments" t-as="appt">
+                                        <tr>
+                                            <td><t t-out="appt.name"/></td>
+                                            <td><t t-out="appt.patient_id.name"/></td>
+                                            <td><t t-out="appt.appointment_date"/></td>
+                                            <td><t t-out="appt.appointment_time_display"/></td>
+                                            <td>
+                                                <t t-out="dict(appt._fields['consultation_type'].selection).get(appt.consultation_type, '')"/>
+                                            </td>
+                                            <td>
+                                                <t t-out="dict(appt._fields['consultation_mode'].selection).get(appt.consultation_mode, '')"/>
+                                            </td>
+                                            <td><t t-out="'%.0f' % appt.final_amount"/></td>
+                                            <td>
+                                                <span t-attf-class="badge #{
+                                                    'bg-success' if appt.payment_status == 'paid' else
+                                                    'bg-warning text-dark' if appt.payment_status == 'pending' else
+                                                    'bg-danger' if appt.payment_status == 'failed' else
+                                                    'bg-secondary'
+                                                }">
+                                                    <t t-out="dict(appt._fields['payment_status'].selection).get(appt.payment_status, '')"/>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span t-attf-class="badge #{
+                                                    'bg-warning text-dark' if appt.state == 'draft' else
+                                                    'bg-info text-dark' if appt.state == 'confirmed' else
+                                                    'bg-primary' if appt.state == 'in_progress' else
+                                                    'bg-success' if appt.state == 'completed' else
+                                                    'bg-danger' if appt.state in ('cancelled', 'no_show') else
+                                                    'bg-secondary'
+                                                }">
+                                                    <t t-out="dict(appt._fields['state'].selection).get(appt.state, appt.state)"/>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

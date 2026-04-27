@@ -1,0 +1,911 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- NAVBAR — Hide "Doctor Registration" for approved doctors     -->
+    <!-- ============================================================ -->
+    <template id="website_layout_doctor_menu" inherit_id="website.template_header_default"
+              name="MedConnect - Doctor Menu Visibility">
+        <xpath expr="//t[@t-foreach='website.menu_id.child_id']" position="replace">
+            <t t-set="is_approved_doctor" t-value="
+                not request.env.user._is_public()
+                and bool(request.env['doctor.doctor'].sudo().search([
+                    ('user_id', '=', request.env.user.id),
+                    ('state', '=', 'approved'),
+                ], limit=1))
+            "/>
+            <t t-foreach="website.menu_id.child_id" t-as="submenu">
+                <t t-if="not (is_approved_doctor and submenu.url == '/doctor-registration')">
+                    <t t-call="website.submenu"
+                       item_class.f="nav-item"
+                       link_class.f="nav-link"/>
+                </t>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- LAYOUT WRAPPER — inherits website.layout                     -->
+    <!-- All pages use this so header/footer/navbar are automatic.    -->
+    <!-- ============================================================ -->
+
+    <!-- ============================================================ -->
+    <!-- 1. DOCTOR LISTING PAGE                                       -->
+    <!--    URL: /doctors                                             -->
+    <!-- ============================================================ -->
+    <template id="website_doctor_list" name="MedConnect - Doctors">
+        <t t-call="website.layout">
+            <div id="wrap" class="medconnect-page">
+
+                <!-- Page Hero -->
+                <section class="mc-hero-section">
+                    <div class="container">
+                        <h1 class="mc-hero-title">Find Your Doctor</h1>
+                        <p class="mc-hero-subtitle">Browse verified specialists and book an appointment online</p>
+
+                        <!-- Search Bar -->
+                        <form action="/doctors" method="GET" class="mc-search-form">
+                            <div class="mc-search-row">
+                                <input type="text" name="search" class="mc-search-input"
+                                       placeholder="Search by name, specialization or city..."
+                                       t-att-value="search"/>
+                                <select name="specialization" class="mc-search-select">
+                                    <option value="">All Specializations</option>
+                                    <t t-foreach="specializations" t-as="spec">
+                                        <option t-att-value="spec.id"
+                                                t-att-selected="selected_specialization == spec.id">
+                                            <t t-out="spec.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                                <button type="submit" class="mc-btn mc-btn-primary">Search</button>
+                                <t t-if="search or selected_specialization or selected_city">
+                                    <a href="/doctors" class="mc-btn mc-btn-outline">Clear</a>
+                                </t>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Results -->
+                <section class="mc-results-section">
+                    <div class="container">
+
+                        <p class="mc-results-count">
+                            <t t-if="total">
+                                Showing
+                                <strong>
+                                    <t t-out="len(doctors)"/>
+                                </strong>
+                                of
+                                <strong>
+                                    <t t-out="total"/>
+                                </strong>
+                                doctors
+                            </t>
+                            <t t-else="">No doctors found matching your criteria.</t>
+                        </p>
+
+                        <div class="mc-doctor-grid">
+                            <t t-foreach="doctors" t-as="doctor">
+                                <div class="mc-doctor-card">
+                                    <!-- Photo -->
+                                    <div class="mc-doctor-photo">
+                                        <t t-if="doctor.image">
+                                            <img t-attf-src="/web/image/doctor.doctor/#{doctor.id}/image/120x120"
+                                                 t-att-alt="doctor.name" class="mc-avatar"/>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="mc-avatar-placeholder">
+                                                <i class="fa fa-user-md"/>
+                                            </div>
+                                        </t>
+                                        <t t-if="doctor.is_verified">
+                                            <span class="mc-badge-verified" title="Verified Doctor">
+                                                <i class="fa fa-check-circle"/>
+                                                Verified
+                                            </span>
+                                        </t>
+                                        <t t-if="doctor.is_featured">
+                                            <span class="mc-badge-featured">Featured</span>
+                                        </t>
+                                    </div>
+
+                                    <!-- Info -->
+                                    <div class="mc-doctor-info">
+                                        <h3 class="mc-doctor-name">
+                                            <a t-attf-href="/doctors/#{doctor.id}">
+                                                Dr.
+                                                <t t-out="doctor.name"/>
+                                            </a>
+                                        </h3>
+                                        <p class="mc-doctor-spec">
+                                            <i class="fa fa-stethoscope"/>
+                                            <t t-out="doctor.specialization_id.name or ''"/>
+                                        </p>
+                                        <t t-if="doctor.city">
+                                            <p class="mc-doctor-location">
+                                                <i class="fa fa-map-marker"/>
+                                                <t t-out="doctor.city"/>
+                                            </p>
+                                        </t>
+                                        <p class="mc-doctor-exp">
+                                            <t t-if="doctor.experience_years">
+                                                <i class="fa fa-briefcase"/>
+                                                <t t-out="doctor.experience_years"/>
+                                                yrs experience
+                                            </t>
+                                        </p>
+
+                                        <!-- Rating -->
+                                        <div class="mc-rating-row">
+                                            <t t-set="full_stars" t-value="int(doctor.rating)"/>
+                                            <t t-set="has_half" t-value="(doctor.rating - full_stars) >= 0.5"/>
+                                            <t t-foreach="range(full_stars)" t-as="s">
+                                                <i class="fa fa-star mc-star-filled"/>
+                                            </t>
+                                            <t t-if="has_half">
+                                                <i class="fa fa-star-half-o mc-star-filled"/>
+                                            </t>
+                                            <span class="mc-rating-count">
+                                                (
+                                                <t t-out="doctor.rating_count"/>
+                                                reviews)
+                                            </span>
+                                        </div>
+
+                                        <!-- Fee -->
+                                        <p class="mc-doctor-fee">
+                                            <strong>₹
+                                                <t t-out="'%.0f' % doctor.consultation_fee"/>
+                                            </strong>
+                                            <span class="mc-fee-label">consultation fee</span>
+                                        </p>
+                                    </div>
+
+                                    <!-- Actions -->
+                                    <div class="mc-doctor-actions">
+                                        <a t-attf-href="/doctors/#{doctor.id}"
+                                           class="mc-btn mc-btn-outline mc-btn-sm">View Profile
+                                        </a>
+                                        <a t-attf-href="/book-appointment/#{doctor.id}"
+                                           class="mc-btn mc-btn-primary mc-btn-sm">Book Appointment
+                                        </a>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+
+                        <!-- No results message -->
+                        <t t-if="not doctors">
+                            <div class="mc-no-results">
+                                <i class="fa fa-search fa-3x"/>
+                                <h3>No doctors found</h3>
+                                <p>Try adjusting your search or <a href="/doctors">view all doctors</a>.
+                                </p>
+                            </div>
+                        </t>
+
+                        <!-- Pagination -->
+                        <t t-if="page_count > 1">
+                            <div class="mc-pagination">
+                                <t t-if="page > 1">
+                                    <a t-attf-href="/doctors?page=#{page - 1}&amp;search=#{search}&amp;specialization=#{selected_specialization or ''}"
+                                       class="mc-btn mc-btn-outline mc-btn-sm">
+                                        <i class="fa fa-chevron-left"/>
+                                        Previous
+                                    </a>
+                                </t>
+                                <span class="mc-page-info">
+                                    Page
+                                    <t t-out="page"/>
+                                    of
+                                    <t t-out="page_count"/>
+                                </span>
+                                <t t-if="page &lt; page_count">
+                                    <a t-attf-href="/doctors?page=#{page + 1}&amp;search=#{search}&amp;specialization=#{selected_specialization or ''}"
+                                       class="mc-btn mc-btn-outline mc-btn-sm">
+                                        Next
+                                        <i class="fa fa-chevron-right"/>
+                                    </a>
+                                </t>
+                            </div>
+                        </t>
+
+                    </div>
+                </section>
+
+                <!-- CTA — Are you a doctor? -->
+                <section class="mc-cta-section">
+                    <div class="container mc-cta-inner">
+                        <h2>Are you a Doctor?</h2>
+                        <p>Join MedConnect and reach thousands of patients looking for your expertise.</p>
+                        <a href="/doctor-registration" class="mc-btn mc-btn-white">Register as a Doctor</a>
+                    </div>
+                </section>
+
+            </div>
+        </t>
+    </template>
+
+
+    <!-- ============================================================ -->
+    <!-- 2. DOCTOR DETAIL PAGE                                        -->
+    <!--    URL: /doctors/<id>                                        -->
+    <!-- ============================================================ -->
+    <template id="website_doctor_detail" name="MedConnect - Doctor Profile">
+        <t t-call="website.layout">
+            <div id="wrap" class="medconnect-page">
+                <div class="container mc-detail-container">
+
+                    <!-- Breadcrumb -->
+                    <nav class="mc-breadcrumb">
+                        <a href="/">Home</a>
+                        /
+                        <a href="/doctors">Doctors</a>
+                        /
+                        <span>Dr.
+                            <t t-out="doctor.name"/>
+                        </span>
+                    </nav>
+
+                    <div class="mc-detail-layout">
+
+                        <!-- LEFT — Profile Card -->
+                        <aside class="mc-profile-card">
+                            <div class="mc-profile-photo-wrap">
+                                <t t-if="doctor.image">
+                                    <img t-attf-src="/web/image/doctor.doctor/#{doctor.id}/image/200x200"
+                                         t-att-alt="doctor.name" class="mc-profile-photo"/>
+                                </t>
+                                <t t-else="">
+                                    <div class="mc-profile-photo-placeholder">
+                                        <i class="fa fa-user-md fa-5x"/>
+                                    </div>
+                                </t>
+                                <t t-if="doctor.is_verified">
+                                    <div class="mc-verified-badge">
+                                        <i class="fa fa-check-circle"/>
+                                        Verified Doctor
+                                    </div>
+                                </t>
+                            </div>
+
+                            <h2 class="mc-profile-name">Dr.
+                                <t t-out="doctor.name"/>
+                            </h2>
+                            <p class="mc-profile-spec">
+                                <t t-out="doctor.specialization_id.name or ''"/>
+                            </p>
+
+                            <t t-if="doctor.city">
+                                <p class="mc-profile-location">
+                                    <i class="fa fa-map-marker"/>
+                                    <t t-out="doctor.city"/>
+                                </p>
+                            </t>
+
+                            <div class="mc-profile-rating">
+                                <t t-set="full_stars" t-value="int(doctor.rating)"/>
+                                <t t-foreach="range(full_stars)" t-as="s">
+                                    <i class="fa fa-star mc-star-filled"/>
+                                </t>
+                                <span>
+                                    <t t-out="'%.1f' % doctor.rating"/>
+                                    (
+                                    <t t-out="doctor.rating_count"/>
+                                    reviews)
+                                </span>
+                            </div>
+
+                            <div class="mc-profile-fee-box">
+                                <p class="mc-fee-amount">₹
+                                    <t t-out="'%.0f' % doctor.consultation_fee"/>
+                                </p>
+                                <p class="mc-fee-label">Consultation Fee</p>
+                            </div>
+
+                            <a t-attf-href="/book-appointment/#{doctor.id}"
+                               class="mc-btn mc-btn-primary mc-btn-block">
+                                Book Appointment
+                            </a>
+                        </aside>
+
+                        <!-- RIGHT — Details -->
+                        <main class="mc-detail-main">
+
+                            <!-- About -->
+                            <t t-if="doctor.bio">
+                                <section class="mc-section">
+                                    <h3 class="mc-section-title">About</h3>
+                                    <div class="mc-bio" t-out="doctor.bio"/>
+                                </section>
+                            </t>
+
+                            <!-- Professional Info -->
+                            <section class="mc-section">
+                                <h3 class="mc-section-title">Professional Details</h3>
+                                <div class="mc-info-grid">
+                                    <t t-if="doctor.qualification">
+                                        <div class="mc-info-item">
+                                            <span class="mc-info-label">Qualification</span>
+                                            <span class="mc-info-value">
+                                                <t t-out="doctor.qualification"/>
+                                            </span>
+                                        </div>
+                                    </t>
+                                    <t t-if="doctor.experience_years">
+                                        <div class="mc-info-item">
+                                            <span class="mc-info-label">Experience</span>
+                                            <span class="mc-info-value">
+                                                <t t-out="doctor.experience_years"/>
+                                                years
+                                            </span>
+                                        </div>
+                                    </t>
+                                    <t t-if="doctor.medical_council">
+                                        <div class="mc-info-item">
+                                            <span class="mc-info-label">Medical Council</span>
+                                            <span class="mc-info-value">
+                                                <t t-out="doctor.medical_council"/>
+                                            </span>
+                                        </div>
+                                    </t>
+                                    <t t-if="doctor.registration_number">
+                                        <div class="mc-info-item">
+                                            <span class="mc-info-label">Registration No.</span>
+                                            <span class="mc-info-value">
+                                                <t t-out="doctor.registration_number"/>
+                                            </span>
+                                        </div>
+                                    </t>
+                                </div>
+                            </section>
+
+                            <!-- Clinic Info -->
+                            <t t-if="doctor.clinic_name">
+                                <section class="mc-section">
+                                    <h3 class="mc-section-title">Clinic / Hospital</h3>
+                                    <div class="mc-info-grid">
+                                        <div class="mc-info-item">
+                                            <span class="mc-info-label">Name</span>
+                                            <span class="mc-info-value">
+                                                <t t-out="doctor.clinic_name"/>
+                                            </span>
+                                        </div>
+                                        <t t-if="doctor.clinic_address">
+                                            <div class="mc-info-item">
+                                                <span class="mc-info-label">Address</span>
+                                                <span class="mc-info-value">
+                                                    <t t-out="doctor.clinic_address"/>
+                                                </span>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </section>
+                            </t>
+
+                            <!-- Consultation Modes -->
+                            <section class="mc-section">
+                                <h3 class="mc-section-title">Consultation Modes</h3>
+                                <div class="mc-modes-row">
+                                    <span class="mc-mode-tag mc-mode-active">
+                                        <i class="fa fa-hospital-o"/>
+                                        In-Person
+                                    </span>
+                                    <t t-if="doctor.offers_video">
+                                        <span class="mc-mode-tag mc-mode-active">
+                                            <i class="fa fa-video-camera"/>
+                                            Video
+                                            <span class="mc-mode-fee">₹
+                                                <t t-out="'%.0f' % doctor.video_fee"/>
+                                            </span>
+                                        </span>
+                                    </t>
+                                    <t t-if="doctor.offers_home_visit">
+                                        <span class="mc-mode-tag mc-mode-active">
+                                            <i class="fa fa-home"/>
+                                            Home Visit
+                                            <span class="mc-mode-fee">₹
+                                                <t t-out="'%.0f' % doctor.home_visit_fee"/>
+                                            </span>
+                                        </span>
+                                    </t>
+                                </div>
+                            </section>
+
+                            <!-- Weekly Schedule -->
+                            <t t-if="doctor.schedule_ids">
+                                <section class="mc-section">
+                                    <h3 class="mc-section-title">Weekly Schedule</h3>
+                                    <table class="mc-schedule-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Day</th>
+                                                <th>From</th>
+                                                <th>To</th>
+                                                <th>Slots</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="doctor.schedule_ids.filtered(lambda s: s.is_available)"
+                                               t-as="sched">
+                                                <tr>
+                                                    <td>
+                                                        <t t-out="dict(sched._fields['day_of_week'].selection).get(sched.day_of_week, '')"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-set="fh" t-value="int(sched.time_from)"/>
+                                                        <t t-set="fm" t-value="int((sched.time_from - fh) * 60)"/>
+                                                        <t t-out="'%02d:%02d %s' % (fh if fh &lt;= 12 else fh - 12, fm, 'AM' if fh &lt; 12 else 'PM')"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-set="th" t-value="int(sched.time_to)"/>
+                                                        <t t-set="tm" t-value="int((sched.time_to - th) * 60)"/>
+                                                        <t t-out="'%02d:%02d %s' % (th if th &lt;= 12 else th - 12, tm, 'AM' if th &lt; 12 else 'PM')"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-out="sched.slot_count"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </section>
+                            </t>
+
+                            <!-- Patient Reviews -->
+                            <t t-if="reviews">
+                                <section class="mc-section">
+                                    <h3 class="mc-section-title">Patient Reviews</h3>
+                                    <div class="mc-reviews-list">
+                                        <t t-foreach="reviews" t-as="review">
+                                            <div class="mc-review-item">
+                                                <div class="mc-review-header">
+                                                    <span class="mc-reviewer-name">
+                                                        <t t-out="review.patient_id.name or 'Anonymous'"/>
+                                                    </span>
+                                                    <span class="mc-review-stars">
+                                                        <t t-foreach="range(int(review.rating))" t-as="s">
+                                                            <i class="fa fa-star mc-star-filled"/>
+                                                        </t>
+                                                    </span>
+                                                </div>
+                                                <t t-if="review.review">
+                                                    <p class="mc-review-comment">
+                                                        <t t-out="review.review"/>
+                                                    </p>
+                                                </t>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </section>
+                            </t>
+
+                        </main>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+
+    <!-- ============================================================ -->
+    <!-- 3. DOCTOR REGISTRATION FORM                                  -->
+    <!--    URL: /doctor-registration                                 -->
+    <!-- ============================================================ -->
+    <template id="website_doctor_registration" name="MedConnect - Doctor Registration">
+        <t t-call="website.layout">
+            <div id="wrap" class="medconnect-page">
+                <div class="container mc-form-container">
+
+                    <div class="mc-form-card">
+                        <div class="mc-form-header">
+                            <h1 class="mc-form-title">
+                                <i class="fa fa-user-md"/>
+                                Register as a Doctor
+                            </h1>
+                            <p class="mc-form-subtitle">
+                                Join MedConnect. Fill in your details and our team will verify your profile.
+                            </p>
+                        </div>
+
+                        <!-- General Error -->
+                        <t t-if="error.get('general')">
+                            <div class="mc-alert mc-alert-error">
+                                <i class="fa fa-exclamation-circle"/>
+                                <t t-out="error.get('general')"/>
+                            </div>
+                        </t>
+
+                        <form action="/doctor-registration" method="POST" class="mc-form" enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                            <!-- SECTION: Personal Information -->
+                            <h3 class="mc-section-divider">Personal Information</h3>
+                            <div class="mc-form-row">
+                                <div class="mc-form-group" t-att-class="'mc-has-error' if error.get('name') else ''">
+                                    <label class="mc-label" for="name">Full Name
+                                        <span class="mc-required">*</span>
+                                    </label>
+                                    <input type="text" name="name" id="name" class="mc-input"
+                                           t-att-value="form_data.get('name', '')"
+                                           placeholder="Dr. First Last Name"/>
+                                    <t t-if="error.get('name')">
+                                        <span class="mc-error-msg">
+                                            <t t-out="error['name']"/>
+                                        </span>
+                                    </t>
+                                </div>
+                                <div class="mc-form-group" t-att-class="'mc-has-error' if error.get('email') else ''">
+                                    <label class="mc-label" for="email">Email Address
+                                        <span class="mc-required">*</span>
+                                    </label>
+                                    <input type="email" name="email" id="email" class="mc-input"
+                                           t-att-value="form_data.get('email', '')"
+                                           placeholder="doctor@example.com"/>
+                                    <t t-if="error.get('email')">
+                                        <span class="mc-error-msg">
+                                            <t t-out="error['email']"/>
+                                        </span>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <div class="mc-form-row">
+                                <div class="mc-form-group" t-att-class="'mc-has-error' if error.get('mobile') else ''">
+                                    <label class="mc-label" for="mc-mobile-number">Mobile
+                                        <span class="mc-required">*</span>
+                                    </label>
+                                    <!-- Hidden field submitted to server: +91 9876543210 -->
+                                    <input type="hidden" name="mobile" id="mobile"
+                                           t-att-value="form_data.get('mobile', '')"/>
+                                    <div class="mc-phone-wrap">
+                                        <select id="mc-dial-code" class="mc-phone-code">
+                                            <option value="+93">&#x1F1E6;&#x1F1EB; +93</option>
+                                            <option value="+355">&#x1F1E6;&#x1F1F1; +355</option>
+                                            <option value="+213">&#x1F1E9;&#x1F1FF; +213</option>
+                                            <option value="+54">&#x1F1E6;&#x1F1F7; +54</option>
+                                            <option value="+61">&#x1F1E6;&#x1F1FA; +61</option>
+                                            <option value="+43">&#x1F1E6;&#x1F1F9; +43</option>
+                                            <option value="+994">&#x1F1E6;&#x1F1FF; +994</option>
+                                            <option value="+973">&#x1F1E7;&#x1F1ED; +973</option>
+                                            <option value="+880">&#x1F1E7;&#x1F1E9; +880</option>
+                                            <option value="+32">&#x1F1E7;&#x1F1EA; +32</option>
+                                            <option value="+55">&#x1F1E7;&#x1F1F7; +55</option>
+                                            <option value="+1">&#x1F1E8;&#x1F1E6; +1</option>
+                                            <option value="+86">&#x1F1E8;&#x1F1F3; +86</option>
+                                            <option value="+57">&#x1F1E8;&#x1F1F4; +57</option>
+                                            <option value="+506">&#x1F1E8;&#x1F1F7; +506</option>
+                                            <option value="+385">&#x1F1ED;&#x1F1F7; +385</option>
+                                            <option value="+53">&#x1F1E8;&#x1F1FA; +53</option>
+                                            <option value="+357">&#x1F1E8;&#x1F1FE; +357</option>
+                                            <option value="+420">&#x1F1E8;&#x1F1FF; +420</option>
+                                            <option value="+45">&#x1F1E9;&#x1F1F0; +45</option>
+                                            <option value="+20">&#x1F1EA;&#x1F1EC; +20</option>
+                                            <option value="+251">&#x1F1EA;&#x1F1F9; +251</option>
+                                            <option value="+358">&#x1F1EB;&#x1F1EE; +358</option>
+                                            <option value="+33">&#x1F1EB;&#x1F1F7; +33</option>
+                                            <option value="+49">&#x1F1E9;&#x1F1EA; +49</option>
+                                            <option value="+233">&#x1F1EC;&#x1F1ED; +233</option>
+                                            <option value="+30">&#x1F1EC;&#x1F1F7; +30</option>
+                                            <option value="+502">&#x1F1EC;&#x1F1F9; +502</option>
+                                            <option value="+36">&#x1F1ED;&#x1F1FA; +36</option>
+                                            <option value="+354">&#x1F1EE;&#x1F1F8; +354</option>
+                                            <option value="+91" selected="selected">&#x1F1EE;&#x1F1F3; +91</option>
+                                            <option value="+62">&#x1F1EE;&#x1F1E9; +62</option>
+                                            <option value="+98">&#x1F1EE;&#x1F1F7; +98</option>
+                                            <option value="+964">&#x1F1EE;&#x1F1F6; +964</option>
+                                            <option value="+353">&#x1F1EE;&#x1F1EA; +353</option>
+                                            <option value="+972">&#x1F1EE;&#x1F1F1; +972</option>
+                                            <option value="+39">&#x1F1EE;&#x1F1F9; +39</option>
+                                            <option value="+81">&#x1F1EF;&#x1F1F5; +81</option>
+                                            <option value="+962">&#x1F1EF;&#x1F1F4; +962</option>
+                                            <option value="+7">&#x1F1F0;&#x1F1FF; +7</option>
+                                            <option value="+254">&#x1F1F0;&#x1F1EA; +254</option>
+                                            <option value="+965">&#x1F1F0;&#x1F1FC; +965</option>
+                                            <option value="+961">&#x1F1F1;&#x1F1E7; +961</option>
+                                            <option value="+60">&#x1F1F2;&#x1F1FE; +60</option>
+                                            <option value="+960">&#x1F1F2;&#x1F1FB; +960</option>
+                                            <option value="+52">&#x1F1F2;&#x1F1FD; +52</option>
+                                            <option value="+212">&#x1F1F2;&#x1F1E6; +212</option>
+                                            <option value="+977">&#x1F1F3;&#x1F1F5; +977</option>
+                                            <option value="+31">&#x1F1F3;&#x1F1F1; +31</option>
+                                            <option value="+64">&#x1F1F3;&#x1F1FF; +64</option>
+                                            <option value="+234">&#x1F1F3;&#x1F1EC; +234</option>
+                                            <option value="+47">&#x1F1F3;&#x1F1F4; +47</option>
+                                            <option value="+968">&#x1F1F4;&#x1F1F2; +968</option>
+                                            <option value="+92">&#x1F1F5;&#x1F1F0; +92</option>
+                                            <option value="+51">&#x1F1F5;&#x1F1EA; +51</option>
+                                            <option value="+63">&#x1F1F5;&#x1F1ED; +63</option>
+                                            <option value="+48">&#x1F1F5;&#x1F1F1; +48</option>
+                                            <option value="+351">&#x1F1F5;&#x1F1F9; +351</option>
+                                            <option value="+974">&#x1F1F6;&#x1F1E6; +974</option>
+                                            <option value="+40">&#x1F1F7;&#x1F1F4; +40</option>
+                                            <option value="+7">&#x1F1F7;&#x1F1FA; +7</option>
+                                            <option value="+966">&#x1F1F8;&#x1F1E6; +966</option>
+                                            <option value="+65">&#x1F1F8;&#x1F1EC; +65</option>
+                                            <option value="+27">&#x1F1FF;&#x1F1E6; +27</option>
+                                            <option value="+82">&#x1F1F0;&#x1F1F7; +82</option>
+                                            <option value="+34">&#x1F1EA;&#x1F1F8; +34</option>
+                                            <option value="+94">&#x1F1F1;&#x1F1F0; +94</option>
+                                            <option value="+46">&#x1F1F8;&#x1F1EA; +46</option>
+                                            <option value="+41">&#x1F1E8;&#x1F1ED; +41</option>
+                                            <option value="+963">&#x1F1F8;&#x1F1FE; +963</option>
+                                            <option value="+886">&#x1F1F9;&#x1F1FC; +886</option>
+                                            <option value="+66">&#x1F1F9;&#x1F1ED; +66</option>
+                                            <option value="+90">&#x1F1F9;&#x1F1F7; +90</option>
+                                            <option value="+256">&#x1F1FA;&#x1F1EC; +256</option>
+                                            <option value="+380">&#x1F1FA;&#x1F1E6; +380</option>
+                                            <option value="+971">&#x1F1E6;&#x1F1EA; +971</option>
+                                            <option value="+44">&#x1F1EC;&#x1F1E7; +44</option>
+                                            <option value="+1">&#x1F1FA;&#x1F1F8; +1</option>
+                                            <option value="+598">&#x1F1FA;&#x1F1FE; +598</option>
+                                            <option value="+58">&#x1F1FB;&#x1F1EA; +58</option>
+                                            <option value="+84">&#x1F1FB;&#x1F1F3; +84</option>
+                                            <option value="+967">&#x1F1FE;&#x1F1EA; +967</option>
+                                            <option value="+260">&#x1F1FF;&#x1F1F2; +260</option>
+                                            <option value="+263">&#x1F1FF;&#x1F1FC; +263</option>
+                                        </select>
+                                        <input type="tel" id="mc-mobile-number" class="mc-input mc-phone-number"
+                                               placeholder="98765 43210" autocomplete="tel-national"/>
+                                    </div>
+                                    <t t-if="error.get('mobile')">
+                                        <span class="mc-error-msg">
+                                            <t t-out="error['mobile']"/>
+                                        </span>
+                                    </t>
+                                </div>
+                                <div class="mc-form-group">
+                                    <label class="mc-label" for="gender">Gender</label>
+                                    <select name="gender" id="gender" class="mc-input">
+                                        <option value="">Select Gender</option>
+                                        <option value="male" t-att-selected="form_data.get('gender') == 'male'">Male
+                                        </option>
+                                        <option value="female" t-att-selected="form_data.get('gender') == 'female'">
+                                            Female
+                                        </option>
+                                        <option value="other" t-att-selected="form_data.get('gender') == 'other'">
+                                            Other
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- SECTION: Professional Information -->
+                            <h3 class="mc-section-divider">Professional Information</h3>
+                            <div class="mc-form-row">
+                                <div class="mc-form-group"
+                                     t-att-class="'mc-has-error' if error.get('specialization_id') else ''">
+                                    <label class="mc-label" for="specialization_id">Specialization
+                                        <span class="mc-required">*</span>
+                                    </label>
+                                    <select name="specialization_id" id="specialization_id" class="mc-input">
+                                        <option value="">Select Specialization</option>
+                                        <t t-foreach="specializations" t-as="spec">
+                                            <option t-att-value="spec.id"
+                                                    t-att-selected="str(form_data.get('specialization_id', '')) == str(spec.id)">
+                                                <t t-out="spec.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                    <t t-if="error.get('specialization_id')">
+                                        <span class="mc-error-msg">
+                                            <t t-out="error['specialization_id']"/>
+                                        </span>
+                                    </t>
+                                </div>
+                                <div class="mc-form-group">
+                                    <label class="mc-label" for="qualification">Primary Qualification</label>
+                                    <input type="text" name="qualification" id="qualification" class="mc-input"
+                                           t-att-value="form_data.get('qualification', '')"
+                                           placeholder="MBBS, MD, MS..."/>
+                                </div>
+                            </div>
+
+                            <div class="mc-form-row">
+                                <div class="mc-form-group"
+                                     t-att-class="'mc-has-error' if error.get('registration_number') else ''">
+                                    <label class="mc-label" for="registration_number">Registration Number
+                                        <span class="mc-required">*</span>
+                                    </label>
+                                    <input type="text" name="registration_number" id="registration_number"
+                                           class="mc-input"
+                                           t-att-value="form_data.get('registration_number', '')"
+                                           placeholder="MCI/State Council Registration No."/>
+                                    <t t-if="error.get('registration_number')">
+                                        <span class="mc-error-msg">
+                                            <t t-out="error['registration_number']"/>
+                                        </span>
+                                    </t>
+                                </div>
+                                <div class="mc-form-group">
+                                    <label class="mc-label" for="medical_council">Medical Council</label>
+                                    <input type="text" name="medical_council" id="medical_council" class="mc-input"
+                                           t-att-value="form_data.get('medical_council', '')"
+                                           placeholder="NMC / State Medical Council"/>
+                                </div>
+                            </div>
+
+                            <div class="mc-form-row">
+                                <div class="mc-form-group">
+                                    <label class="mc-label" for="experience_years">Years of Experience</label>
+                                    <input type="number" name="experience_years" id="experience_years" class="mc-input"
+                                           t-att-value="form_data.get('experience_years', '')"
+                                           placeholder="e.g. 10" min="0" max="60"/>
+                                </div>
+                                <div class="mc-form-group"
+                                     t-att-class="'mc-has-error' if error.get('consultation_fee') else ''">
+                                    <label class="mc-label" for="consultation_fee">Consultation Fee (₹)
+                                        <span class="mc-required">*</span>
+                                    </label>
+                                    <input type="number" name="consultation_fee" id="consultation_fee" class="mc-input"
+                                           t-att-value="form_data.get('consultation_fee', '')"
+                                           placeholder="e.g. 500" min="1" step="any"/>
+                                    <t t-if="error.get('consultation_fee')">
+                                        <span class="mc-error-msg">
+                                            <t t-out="error['consultation_fee']"/>
+                                        </span>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <!-- SECTION: Clinic / Practice -->
+                            <h3 class="mc-section-divider">Clinic / Practice Details</h3>
+                            <div class="mc-form-row">
+                                <div class="mc-form-group">
+                                    <label class="mc-label" for="clinic_name">Clinic / Hospital Name</label>
+                                    <input type="text" name="clinic_name" id="clinic_name" class="mc-input"
+                                           t-att-value="form_data.get('clinic_name', '')"
+                                           placeholder="Apollo, Fortis, Private Clinic..."/>
+                                </div>
+                                <div class="mc-form-group">
+                                    <label class="mc-label" for="city">City</label>
+                                    <input type="text" name="city" id="city" class="mc-input"
+                                           t-att-value="form_data.get('city', '')"
+                                           placeholder="Mumbai, Delhi, Ahmedabad..."/>
+                                </div>
+                            </div>
+
+                            <div class="mc-form-group mc-form-group-full">
+                                <label class="mc-label" for="bio">About Yourself</label>
+                                <textarea name="bio" id="bio" class="mc-textarea" rows="4"
+                                          placeholder="Brief description of your expertise, approach, areas of focus...">
+                                    <t t-out="form_data.get('bio', '')"/>
+                                </textarea>
+                            </div>
+
+                            <!-- SECTION: Country & Compliance -->
+                            <h3 class="mc-section-divider">Country &amp; Compliance</h3>
+
+                            <!-- Country of Medical Practice -->
+                            <div class="mc-form-row">
+                                <div class="mc-form-group">
+                                    <label class="mc-label" for="country_id">
+                                        Country of Medical Practice
+                                    </label>
+                                    <select name="country_id" id="country_id" class="mc-input">
+                                        <option value="">Select Country</option>
+                                        <t t-foreach="countries" t-as="country">
+                                            <option t-att-value="country.id"
+                                                    t-att-selected="str(form_data.get('country_id', '')) == str(country.id)">
+                                                <t t-out="country.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Compliance — shown/hidden dynamically by JS when country changes -->
+                            <div id="compliance_section" class="mc-form-group mc-form-group-full" style="display:none;">
+                                <label class="mc-label">Compliance Requirements</label>
+                                <!-- Hidden field: stores the compliance record ID -->
+                                <input type="hidden" name="compliance_id" id="compliance_id" value=""/>
+                                <!-- Rendered HTML from country.compliance.description -->
+                                <div id="compliance_description"
+                                     class="border rounded p-3 bg-light mb-2"
+                                     style="max-height:300px; overflow-y:auto;">
+                                </div>
+                                <!-- Checkbox: doctor must tick before submitting -->
+                                <div class="mc-form-group">
+                                    <label class="mc-label">
+                                        <input type="checkbox" name="compliance_accepted"
+                                               id="compliance_accepted" value="1"/>
+                                        &#160;I have read and accept the compliance requirements
+                                        <span class="mc-required">*</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Submit -->
+                            <div class="mc-form-submit">
+                                <button type="submit" class="mc-btn mc-btn-primary mc-btn-lg">
+                                    <i class="fa fa-paper-plane"/>
+                                    Submit Registration
+                                </button>
+                                <p class="mc-form-note">
+                                    By submitting, you agree to our verification process.
+                                    Your profile will be reviewed within 24–48 hours.
+                                </p>
+                            </div>
+
+                        </form>
+
+                        <!-- Phone field combiner + error-state restore -->
+                        <script type="text/javascript">
+                            (function () {
+                            var dialSelect = document.getElementById('mc-dial-code');
+                            var numberInput = document.getElementById('mc-mobile-number');
+                            var hiddenInput = document.getElementById('mobile');
+
+                            if (!dialSelect || !numberInput || !hiddenInput) return;
+
+                            /* On error re-render: parse stored value back into dropdown + number */
+                            var stored = (hiddenInput.value || '').trim();
+                            if (stored) {
+                            /* Find the longest matching dial code */
+                            var opts = Array.from(dialSelect.options);
+                            var matched = opts
+                            .filter(function(o) { return stored.startsWith(o.value); })
+                            .sort(function(a, b) { return b.value.length - a.value.length; })[0];
+                            if (matched) {
+                            dialSelect.value = matched.value;
+                            numberInput.value = stored.slice(matched.value.length).replace(/^\s+/, '');
+                            } else {
+                            numberInput.value = stored;
+                            }
+                            }
+
+                            /* Combine dial code + number into hidden field */
+                            function sync() {
+                            var code = dialSelect.value;
+                            var number = numberInput.value.trim();
+                            hiddenInput.value = number ? (code + ' ' + number) : '';
+                            }
+
+                            dialSelect.addEventListener('change', sync);
+                            numberInput.addEventListener('input', sync);
+
+                            /* Sync once on load in case values are already set */
+                            sync();
+                            })();
+                        </script>
+
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+
+    <!-- ============================================================ -->
+    <!-- 4. DOCTOR REGISTRATION SUCCESS                               -->
+    <!-- ============================================================ -->
+    <template id="website_doctor_registration_success" name="MedConnect - Registration Success">
+        <t t-call="website.layout">
+            <div id="wrap" class="medconnect-page">
+                <div class="container mc-success-container">
+                    <div class="mc-success-card">
+                        <div class="mc-success-icon">
+                            <i class="fa fa-check-circle"/>
+                        </div>
+                        <h1 class="mc-success-title">Application Submitted!</h1>
+                        <p class="mc-success-msg">
+                            Thank you for registering with MedConnect.
+                            <strong>Your application is under review.</strong>
+                        </p>
+                        <p class="mc-success-note">
+                            Our team will verify your details within <strong>24–48 hours</strong>.
+                            You will receive an email once your profile is approved.
+                        </p>
+                        <div class="mc-success-actions">
+                            <a href="/" class="mc-btn mc-btn-outline">Back to Home</a>
+                            <a href="/doctors" class="mc-btn mc-btn-primary">Browse Doctors</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

@@ -1,0 +1,596 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Insurance Provider Views -->
+    <record id="view_insurance_provider_form" model="ir.ui.view">
+        <field name="name">insurance.provider.form</field>
+        <field name="model">insurance.provider</field>
+        <field name="arch" type="xml">
+            <form string="Insurance Provider">
+                <header>
+                    <button name="action_activate" string="Activate" type="object"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_suspend" string="Suspend" type="object"
+                            class="btn-warning" invisible="state != 'active'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_plans" type="object" class="oe_stat_button" icon="fa-list">
+                            <field name="plan_count" widget="statinfo" string="Plans"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-file-text-o" type="object" name="action_view_policies">
+                            <field name="active_policies" widget="statinfo" string="Policies"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-money" type="object" name="action_view_claims">
+                            <field name="total_claims" widget="statinfo" string="Claims"/>
+                        </button>
+                    </div>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Provider Name"/></h1>
+                        <h3><field name="code" placeholder="Provider Code"/></h3>
+                    </div>
+                    <group>
+                        <group string="Provider Details">
+                            <field name="provider_type"/>
+                            <field name="is_tpa"/>
+                            <field name="parent_insurer_id" invisible="not is_tpa"/>
+                            <field name="registration_number"/>
+                            <field name="irdai_registration"/>
+                        </group>
+                        <group string="Contact">
+                            <field name="email"/>
+                            <field name="phone"/>
+                            <field name="website" widget="url"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Address">
+                            <field name="street"/>
+                            <field name="city"/>
+                            <field name="state_id"/>
+                            <field name="country_id"/>
+                            <field name="zip_code"/>
+                        </group>
+                        <group string="Primary Contact">
+                            <field name="contact_person"/>
+                            <field name="contact_email"/>
+                            <field name="contact_phone"/>
+                            <field name="contact_designation"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Plans" name="plans">
+                            <field name="plan_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="plan_type"/>
+                                    <field name="sum_insured"/>
+                                    <field name="premium_amount"/>
+                                    <field name="cashless_available"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Claims Settings" name="claims_settings">
+                            <group>
+                                <group>
+                                    <field name="claim_submission_email"/>
+                                    <field name="preauth_email"/>
+                                    <field name="average_claim_days"/>
+                                </group>
+                                <group>
+                                    <field name="integration_enabled"/>
+                                    <field name="api_endpoint" invisible="not integration_enabled"/>
+                                    <field name="api_key" password="True" invisible="not integration_enabled"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_insurance_provider_list" model="ir.ui.view">
+        <field name="name">insurance.provider.list</field>
+        <field name="model">insurance.provider</field>
+        <field name="arch" type="xml">
+            <list string="Insurance Providers">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="provider_type"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="active_policies"/>
+                <field name="state" widget="badge" 
+                       decoration-success="state == 'active'"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'suspended'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_insurance_provider_search" model="ir.ui.view">
+        <field name="name">insurance.provider.search</field>
+        <field name="model">insurance.provider</field>
+        <field name="arch" type="xml">
+            <search string="Search Providers">
+                <field name="name"/>
+                <field name="code"/>
+                <filter name="active" string="Active" domain="[('state', '=', 'active')]"/>
+                <filter name="tpa" string="TPA" domain="[('is_tpa', '=', True)]"/>
+                <separator/>
+                <filter name="group_type" string="Provider Type" context="{'group_by': 'provider_type'}"/>
+                <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+
+            </search>
+        </field>
+    </record>
+
+    <record id="action_insurance_provider" model="ir.actions.act_window">
+        <field name="name">Insurance Providers</field>
+        <field name="res_model">insurance.provider</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Insurance Plan Views -->
+    <record id="view_insurance_plan_form" model="ir.ui.view">
+        <field name="name">insurance.plan.form</field>
+        <field name="model">insurance.plan</field>
+        <field name="arch" type="xml">
+            <form string="Insurance Plan">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Plan Name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Basic Info">
+                            <field name="code"/>
+                            <field name="provider_id"/>
+                            <field name="plan_type"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Coverage">
+                            <field name="sum_insured"/>
+                            <field name="premium_amount"/>
+                            <field name="premium_frequency"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Limits">
+                            <field name="room_rent_type"/>
+                            <field name="room_rent_limit" invisible="room_rent_type == 'no_limit'"/>
+                            <field name="copay_percent"/>
+                            <field name="deductible"/>
+                        </group>
+                        <group string="OPD Coverage">
+                            <field name="consultation_covered"/>
+                            <field name="consultation_limit" invisible="not consultation_covered"/>
+                            <field name="consultation_copay" invisible="not consultation_covered"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Waiting Periods">
+                            <field name="initial_waiting_period"/>
+                            <field name="ped_waiting_period"/>
+                        </group>
+                        <group string="Features">
+                            <field name="cashless_available"/>
+                            <field name="preauth_required"/>
+                            <field name="network_hospitals_only"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="Plan Description..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_insurance_plan_list" model="ir.ui.view">
+        <field name="name">insurance.plan.list</field>
+        <field name="model">insurance.plan</field>
+        <field name="arch" type="xml">
+            <list string="Insurance Plans">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="provider_id"/>
+                <field name="plan_type"/>
+                <field name="sum_insured"/>
+                <field name="premium_amount"/>
+                <field name="cashless_available"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_insurance_plan" model="ir.actions.act_window">
+        <field name="name">Insurance Plans</field>
+        <field name="res_model">insurance.plan</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Patient Insurance Policy Views -->
+    <record id="view_patient_insurance_policy_form" model="ir.ui.view">
+        <field name="name">patient.insurance.policy.form</field>
+        <field name="model">patient.insurance.policy</field>
+        <field name="arch" type="xml">
+            <form string="Insurance Policy">
+                <header>
+                    <button name="action_activate" string="Activate" type="object"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_expire" string="Mark Expired" type="object"
+                            class="btn-warning" invisible="state != 'active'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,expired"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-money" type="object" name="action_view_claims">
+                            <field name="claim_count" widget="statinfo" string="Claims"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Policy Number"/></h1>
+                    </div>
+                    <group>
+                        <group string="Policy Details">
+                            <field name="patient_id"/>
+                            <field name="provider_id"/>
+                            <field name="plan_id" domain="[('provider_id', '=', provider_id)]"/>
+                            <field name="policy_type"/>
+                        </group>
+                        <group string="Coverage">
+                            <field name="sum_insured"/>
+                            <field name="sum_available"/>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Policy Holder">
+                            <field name="holder_name"/>
+                            <field name="holder_relation"/>
+                            <field name="card_number"/>
+                        </group>
+                        <group string="Corporate (if applicable)">
+                            <field name="corporate_id"/>
+                            <field name="corporate_employee_id" domain="[('corporate_id', '=', corporate_id)]"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Claims" name="claims">
+                            <field name="claim_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="claim_type"/>
+                                    <field name="treatment_type"/>
+                                    <field name="claimed_amount"/>
+                                    <field name="approved_amount"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Card" name="card">
+                            <group>
+                                <field name="card_image" widget="image"/>
+                            </group>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Additional notes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_patient_insurance_policy_list" model="ir.ui.view">
+        <field name="name">patient.insurance.policy.list</field>
+        <field name="model">patient.insurance.policy</field>
+        <field name="arch" type="xml">
+            <list string="Insurance Policies" decoration-danger="state == 'expired'" decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="provider_id"/>
+                <field name="plan_id"/>
+                <field name="sum_insured"/>
+                <field name="sum_available"/>
+                <field name="end_date"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'active'"
+                       decoration-info="state == 'draft'"
+                       decoration-danger="state == 'expired'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_patient_insurance_policy_search" model="ir.ui.view">
+        <field name="name">patient.insurance.policy.search</field>
+        <field name="model">patient.insurance.policy</field>
+        <field name="arch" type="xml">
+            <search string="Search Policies">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="provider_id"/>
+                <filter name="active" string="Active" domain="[('state', '=', 'active')]"/>
+                <filter name="expiring" string="Expiring Soon" 
+                        domain="[('state', '=', 'active'), ('end_date', '&lt;=', (context_today() + datetime.timedelta(days=30)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter name="group_provider" string="Provider" context="{'group_by': 'provider_id'}"/>
+                <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+
+            </search>
+        </field>
+    </record>
+
+    <record id="action_patient_insurance_policy" model="ir.actions.act_window">
+        <field name="name">Patient Policies</field>
+        <field name="res_model">patient.insurance.policy</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Insurance Claim Views -->
+    <record id="view_insurance_claim_form" model="ir.ui.view">
+        <field name="name">insurance.claim.form</field>
+        <field name="model">insurance.claim</field>
+        <field name="arch" type="xml">
+            <form string="Insurance Claim">
+                <header>
+                    <button name="action_submit" string="Submit Claim" type="object"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_review" string="Start Review" type="object"
+                            class="btn-primary" invisible="state != 'submitted'"/>
+                    <button name="action_raise_query" string="Raise Query" type="object"
+                            class="btn-warning" invisible="state != 'under_review'"/>
+                    <button name="action_approve" string="Approve" type="object"
+                            class="btn-success" invisible="state not in ('under_review', 'query')"/>
+                    <button name="action_reject" string="Reject" type="object"
+                            class="btn-danger" invisible="state not in ('under_review', 'query')"/>
+                    <button name="action_settle" string="Settle" type="object"
+                            class="btn-success" invisible="state != 'approved'"/>
+                    <field name="state" widget="statusbar" 
+                           statusbar_visible="draft,submitted,under_review,approved,settled"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Claim Details">
+                            <field name="policy_id"/>
+                            <field name="patient_id"/>
+                            <field name="provider_id"/>
+                            <field name="claim_type"/>
+                            <field name="treatment_type"/>
+                        </group>
+                        <group string="Amounts">
+                            <field name="claimed_amount"/>
+                            <field name="approved_amount" readonly="state not in ('under_review', 'query')"/>
+                            <field name="copay_amount"/>
+                            <field name="deductible_amount"/>
+                            <field name="settlement_amount"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Treatment Details">
+                            <field name="admission_date"/>
+                            <field name="discharge_date"/>
+                            <field name="doctor_id"/>
+                            <field name="hospital_name"/>
+                            <field name="appointment_id"/>
+                        </group>
+                        <group string="Processing">
+                            <field name="submission_date"/>
+                            <field name="processing_date"/>
+                            <field name="settlement_date"/>
+                            <field name="tpa_claim_number"/>
+                            <field name="insurer_claim_number"/>
+                        </group>
+                    </group>
+                    <group invisible="claim_type != 'cashless'">
+                        <group string="Pre-authorization">
+                            <field name="preauth_required"/>
+                            <field name="preauth_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Diagnosis &amp; Treatment" name="diagnosis">
+                            <group>
+                                <field name="diagnosis" placeholder="Diagnosis details..."/>
+                                <field name="treatment_details" placeholder="Treatment details..."/>
+                            </group>
+                        </page>
+                        <page string="Documents" name="documents">
+                            <field name="document_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="document_type"/>
+                                    <field name="file" filename="file_name"/>
+                                    <field name="file_name" column_invisible="1"/>
+                                    <field name="notes"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Status" name="status" invisible="state == 'draft'">
+                            <group>
+                                <field name="rejection_reason" readonly="state != 'rejected'"
+                                       invisible="state not in ('rejected',)"/>
+                                <field name="query_details" readonly="state != 'query'"
+                                       invisible="state not in ('query',)"/>
+                            </group>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Internal notes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_insurance_claim_list" model="ir.ui.view">
+        <field name="name">insurance.claim.list</field>
+        <field name="model">insurance.claim</field>
+        <field name="arch" type="xml">
+            <list string="Insurance Claims" decoration-info="state == 'draft'" 
+                  decoration-warning="state in ('query', 'under_review')"
+                  decoration-success="state == 'settled'"
+                  decoration-danger="state == 'rejected'">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="provider_id"/>
+                <field name="claim_type"/>
+                <field name="treatment_type"/>
+                <field name="claimed_amount" sum="Total Claimed"/>
+                <field name="approved_amount" sum="Total Approved"/>
+                <field name="settlement_amount" sum="Total Settled"/>
+                <field name="submission_date"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_insurance_claim_search" model="ir.ui.view">
+        <field name="name">insurance.claim.search</field>
+        <field name="model">insurance.claim</field>
+        <field name="arch" type="xml">
+            <search string="Search Claims">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="provider_id"/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="submitted" string="Submitted" domain="[('state', '=', 'submitted')]"/>
+                <filter name="pending" string="Pending Review" domain="[('state', 'in', ('under_review', 'query'))]"/>
+                <filter name="approved" string="Approved" domain="[('state', '=', 'approved')]"/>
+                <filter name="settled" string="Settled" domain="[('state', '=', 'settled')]"/>
+                <filter name="rejected" string="Rejected" domain="[('state', '=', 'rejected')]"/>
+                <separator/>
+                <filter name="group_provider" string="Provider" context="{'group_by': 'provider_id'}"/>
+                <filter name="group_type" string="Claim Type" context="{'group_by': 'claim_type'}"/>
+                <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                <filter name="group_month" string="Month" context="{'group_by': 'submission_date:month'}"/>
+
+            </search>
+        </field>
+    </record>
+
+    <record id="action_insurance_claim" model="ir.actions.act_window">
+        <field name="name">Insurance Claims</field>
+        <field name="res_model">insurance.claim</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_insurance_claim_pending" model="ir.actions.act_window">
+        <field name="name">Pending Claims</field>
+        <field name="res_model">insurance.claim</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', 'in', ('submitted', 'under_review', 'query'))]</field>
+    </record>
+
+    <!-- Pre-authorization Views -->
+    <record id="view_insurance_preauth_form" model="ir.ui.view">
+        <field name="name">insurance.preauth.form</field>
+        <field name="model">insurance.preauth</field>
+        <field name="arch" type="xml">
+            <form string="Pre-authorization">
+                <header>
+                    <button name="action_request" string="Send Request" type="object"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_approve" string="Approve" type="object"
+                            class="btn-success" invisible="state not in ('requested', 'under_review')"/>
+                    <button name="action_reject" string="Reject" type="object"
+                            class="btn-danger" invisible="state not in ('requested', 'under_review')"/>
+                    <field name="state" widget="statusbar" 
+                           statusbar_visible="draft,requested,approved,used"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Patient &amp; Policy">
+                            <field name="policy_id"/>
+                            <field name="patient_id"/>
+                            <field name="provider_id"/>
+                        </group>
+                        <group string="Amounts">
+                            <field name="estimated_amount"/>
+                            <field name="approved_amount"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Treatment">
+                            <field name="treatment_type"/>
+                            <field name="planned_date"/>
+                            <field name="expected_days"/>
+                            <field name="doctor_id"/>
+                            <field name="hospital_name"/>
+                        </group>
+                        <group string="Validity">
+                            <field name="request_date"/>
+                            <field name="response_date"/>
+                            <field name="valid_from"/>
+                            <field name="valid_to"/>
+                            <field name="insurer_preauth_number"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Details" name="details">
+                            <group>
+                                <field name="diagnosis" placeholder="Provisional diagnosis..."/>
+                                <field name="treatment_plan" placeholder="Treatment plan..."/>
+                            </group>
+                        </page>
+                        <page string="Response" name="response" invisible="state == 'draft'">
+                            <group>
+                                <field name="conditions"/>
+                                <field name="rejection_reason" invisible="state != 'rejected'"/>
+                            </group>
+                        </page>
+                        <page string="Claims" name="claims">
+                            <field name="claim_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="claimed_amount"/>
+                                    <field name="approved_amount"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_insurance_preauth_list" model="ir.ui.view">
+        <field name="name">insurance.preauth.list</field>
+        <field name="model">insurance.preauth</field>
+        <field name="arch" type="xml">
+            <list string="Pre-authorizations">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="provider_id"/>
+                <field name="treatment_type"/>
+                <field name="planned_date"/>
+                <field name="estimated_amount"/>
+                <field name="approved_amount"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_insurance_preauth" model="ir.actions.act_window">
+        <field name="name">Pre-authorizations</field>
+        <field name="res_model">insurance.preauth</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

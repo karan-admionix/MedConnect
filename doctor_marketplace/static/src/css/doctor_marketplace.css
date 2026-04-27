@@ -1,0 +1,76 @@
+/* Doctor Marketplace Custom Styles */
+
+.o_doctor_marketplace {
+    /* Custom colors for the module */
+}
+
+/* Badge colors */
+.badge-verified {
+    background-color: #2196F3 !important;
+    color: white !important;
+}
+
+.badge-certified {
+    background-color: #4CAF50 !important;
+    color: white !important;
+}
+
+.badge-excellence {
+    background-color: #FF9800 !important;
+    color: white !important;
+}
+
+.badge-master {
+    background-color: #9C27B0 !important;
+    color: white !important;
+}
+
+/* Subscription plan cards */
+.o_subscription_plan_card {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.o_subscription_plan_card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.o_subscription_plan_featured {
+    border: 2px solid #4CAF50;
+}
+
+/* Doctor profile */
+.o_doctor_rating {
+    color: #FFC107;
+}
+
+.o_doctor_verified_badge {
+    color: #2196F3;
+}
+
+/* Appointment status colors */
+.o_appointment_draft {
+    background-color: #9E9E9E;
+}
+
+.o_appointment_confirmed {
+    background-color: #2196F3;
+}
+
+.o_appointment_in_progress {
+    background-color: #FF9800;
+}
+
+.o_appointment_completed {
+    background-color: #4CAF50;
+}
+
+.o_appointment_cancelled {
+    background-color: #f44336;
+}
+
+.o_appointment_no_show {
+    background-color: #795548;
+}

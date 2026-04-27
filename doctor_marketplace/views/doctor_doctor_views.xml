@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List View -->
+    <record id="doctor_doctor_view_list" model="ir.ui.view">
+        <field name="name">doctor.doctor.list</field>
+        <field name="model">doctor.doctor</field>
+        <field name="arch" type="xml">
+            <list string="Doctors">
+                <field name="name"/>
+                <field name="specialization_id"/>
+                <field name="mobile"/>
+                <field name="city"/>
+                <field name="consultation_fee"/>
+                <field name="rating"/>
+                <field name="state" widget="badge" decoration-success="state == 'approved'"
+                       decoration-warning="state == 'pending'" decoration-danger="state in ('rejected', 'suspended')"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="doctor_doctor_view_form" model="ir.ui.view">
+        <field name="name">doctor.doctor.form</field>
+        <field name="model">doctor.doctor</field>
+        <field name="arch" type="xml">
+            <form string="Doctor">
+                <header>
+                    <button name="action_submit_verification" string="Submit for Verification" type="object"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_approve" string="Approve" type="object" class="btn-success"
+                            invisible="state != 'pending'"
+                            groups="doctor_marketplace.group_doctor_marketplace_manager"/>
+                    <button name="action_open_reject_wizard" string="Reject" type="object"
+                            class="btn-danger" invisible="state != 'pending'"
+                            groups="doctor_marketplace.group_doctor_marketplace_manager"/>
+                    <button name="action_suspend" string="Suspend" type="object" invisible="state != 'approved'"
+                            groups="doctor_marketplace.group_doctor_marketplace_manager"/>
+                    <button name="action_reactivate" string="Reactivate" type="object" invisible="state != 'suspended'"
+                            groups="doctor_marketplace.group_doctor_marketplace_manager"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,pending,approved"/>
+                    <field name="rejection_reason" invisible="state != 'rejected'" readonly="1" class="text-danger"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_appointments" type="object" class="oe_stat_button"
+                                icon="fa-calendar">
+                            <field name="total_appointments" widget="statinfo" string="Appointments"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-star">
+                            <field name="rating" widget="statinfo" string="Rating"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-money">
+                            <field name="total_earnings" widget="statinfo" string="Earnings"/>
+                        </button>
+                    </div>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Dr. Full Name"/>
+                        </h1>
+                        <field name="specialization_id" placeholder="Select Specialization"/>
+                    </div>
+                    <group>
+                        <group string="Contact Information">
+                            <field name="email"/>
+                            <field name="mobile"/>
+                            <field name="phone"/>
+                            <field name="website"/>
+                        </group>
+                        <group string="Personal Details">
+                            <field name="gender"/>
+                            <field name="date_of_birth"/>
+                            <field name="is_verified"/>
+                            <field name="is_featured"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Professional Info" name="professional">
+                            <group>
+                                <group>
+                                    <field name="qualification"/>
+                                    <field name="registration_number"/>
+                                    <field name="medical_council"/>
+                                    <field name="registration_year"/>
+                                    <field name="experience_years"/>
+                                </group>
+                                <group>
+                                    <field name="additional_qualifications"/>
+                                </group>
+                            </group>
+                            <field name="bio" placeholder="Write about the doctor..."/>
+                        </page>
+                        <page string="Practice" name="practice">
+                            <group>
+                                <group>
+                                    <field name="clinic_name"/>
+                                    <field name="city"/>
+                                    <field name="state_id"/>
+                                    <field name="country_id"/>
+                                    <field name="zip_code"/>
+                                </group>
+                                <group>
+                                    <field name="clinic_address"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Consultation" name="consultation">
+                            <group>
+                                <group>
+                                    <field name="consultation_fee"/>
+                                    <field name="followup_fee"/>
+                                    <field name="followup_validity_days"/>
+                                </group>
+                                <group>
+                                    <field name="consultation_duration"/>
+                                    <field name="buffer_time"/>
+                                    <field name="advance_booking_days"/>
+                                    <field name="same_day_booking"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="offers_video"/>
+                                    <field name="video_fee" invisible="not offers_video"/>
+                                </group>
+                                <group>
+                                    <field name="offers_home_visit"/>
+                                    <field name="home_visit_fee" invisible="not offers_home_visit"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Schedule" name="schedule">
+                            <!-- Editable only for Manager/Admin -->
+                            <field name="schedule_ids"
+                                   groups="doctor_marketplace.group_doctor_marketplace_manager">
+                                <list editable="bottom">
+                                    <field name="day_of_week"/>
+                                    <field name="time_from" widget="float_time"/>
+                                    <field name="time_to" widget="float_time"/>
+                                    <field name="is_available"/>
+                                    <field name="slot_count"/>
+                                </list>
+                            </field>
+                            <!-- Read-only for everyone else -->
+                            <field name="schedule_ids"
+                                   groups="!doctor_marketplace.group_doctor_marketplace_manager"
+                                   readonly="1">
+                                <list>
+                                    <field name="day_of_week"/>
+                                    <field name="time_from" widget="float_time"/>
+                                    <field name="time_to" widget="float_time"/>
+                                    <field name="is_available"/>
+                                    <field name="slot_count"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Documents" name="documents">
+                            <field name="document_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="document_type"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Bank Details" name="bank">
+                            <group>
+                                <group>
+                                    <field name="bank_name"/>
+                                    <field name="bank_account_number"/>
+                                    <field name="bank_ifsc"/>
+                                </group>
+                                <group>
+                                    <field name="bank_account_name"/>
+                                    <field name="upi_id"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Badges" name="badges">
+                            <field name="badge_ids" widget="many2many_tags"/>
+                            <group>
+                                <group>
+                                    <field name="dynamic_pricing_enabled"/>
+                                    <field name="dynamic_pricing_min" invisible="not dynamic_pricing_enabled"/>
+                                    <field name="dynamic_pricing_max" invisible="not dynamic_pricing_enabled"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Compliance" name="compliance">
+                            <group>
+                                <group string="Compliance Details">
+                                    <field name="compliance_id"/>
+                                    <field name="compliance_accepted"/>
+                                    <field name="compliance_accepted_on" readonly="1"/>
+                                </group>
+                                <group string="Country Change Tracking">
+                                    <field name="country_change_old_name" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="doctor_doctor_action" model="ir.actions.act_window">
+        <field name="name">Doctors</field>
+        <field name="res_model">doctor.doctor</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Register your first doctor</p>
+        </field>
+    </record>
+
+    <!-- Pending Doctors Action -->
+    <record id="doctor_doctor_action_pending" model="ir.actions.act_window">
+        <field name="name">Pending Verification</field>
+        <field name="res_model">doctor.doctor</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'pending')]</field>
+    </record>
+
+</odoo>

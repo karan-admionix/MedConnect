@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- ============================================================ -->
+    <!-- CORPORATE ACCOUNT VIEWS                                      -->
+    <!-- ============================================================ -->
+    
+    <record id="corporate_account_view_list" model="ir.ui.view">
+        <field name="name">corporate.account.list</field>
+        <field name="model">corporate.account</field>
+        <field name="arch" type="xml">
+            <list string="Corporate Accounts">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="industry"/>
+                <field name="company_size"/>
+                <field name="plan_id"/>
+                <field name="employee_count"/>
+                <field name="total_appointments"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="corporate_account_view_form" model="ir.ui.view">
+        <field name="name">corporate.account.form</field>
+        <field name="model">corporate.account</field>
+        <field name="arch" type="xml">
+            <form string="Corporate Account">
+                <header>
+                    <button name="action_submit" string="Submit" type="object" invisible="state != 'draft'"/>
+                    <button name="action_approve" string="Approve" type="object" class="btn-success" invisible="state != 'pending'" groups="doctor_marketplace.group_doctor_marketplace_manager"/>
+                    <button name="action_suspend" string="Suspend" type="object" invisible="state != 'active'" groups="doctor_marketplace.group_doctor_marketplace_manager"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-users">
+                            <field name="employee_count" widget="statinfo" string="Employees"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-calendar">
+                            <field name="total_appointments" widget="statinfo" string="Appointments"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-money">
+                            <field name="total_spent" widget="statinfo" string="Healthcare Spend"/>
+                        </button>
+                    </div>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Company Name"/></h1>
+                        <field name="code"/>
+                    </div>
+                    <group>
+                        <group string="Company Info">
+                            <field name="industry"/>
+                            <field name="company_size"/>
+                            <field name="gst_number"/>
+                            <field name="pan_number"/>
+                        </group>
+                        <group string="Contact">
+                            <field name="email"/>
+                            <field name="phone"/>
+                            <field name="website"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Address">
+                            <field name="street"/>
+                            <field name="city"/>
+                            <field name="state_id"/>
+                            <field name="zip_code"/>
+                        </group>
+                        <group string="Primary Contact">
+                            <field name="contact_person"/>
+                            <field name="contact_email"/>
+                            <field name="contact_phone"/>
+                            <field name="contact_designation"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Health Plan" name="plan">
+                            <group>
+                                <group>
+                                    <field name="plan_id"/>
+                                    <field name="contract_start"/>
+                                    <field name="contract_end"/>
+                                </group>
+                                <group>
+                                    <field name="billing_cycle"/>
+                                    <field name="per_employee_cost"/>
+                                    <field name="total_monthly_cost"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="max_dependents_per_employee"/>
+                            </group>
+                        </page>
+                        <page string="Employees" name="employees">
+                            <field name="employee_ids">
+                                <list>
+                                    <field name="employee_id_number"/>
+                                    <field name="name"/>
+                                    <field name="email"/>
+                                    <field name="department"/>
+                                    <field name="dependent_count"/>
+                                    <field name="appointments_used"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="HR Contact" name="hr">
+                            <group>
+                                <group>
+                                    <field name="hr_name"/>
+                                    <field name="hr_email"/>
+                                    <field name="hr_phone"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="corporate_account_action" model="ir.actions.act_window">
+        <field name="name">Corporate Accounts</field>
+        <field name="res_model">corporate.account</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- CORPORATE PLAN VIEWS                                         -->
+    <!-- ============================================================ -->
+    
+    <record id="corporate_plan_view_list" model="ir.ui.view">
+        <field name="name">corporate.plan.list</field>
+        <field name="model">corporate.plan</field>
+        <field name="arch" type="xml">
+            <list string="Corporate Plans">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="base_price_per_employee"/>
+                <field name="free_consultations"/>
+                <field name="consultation_discount"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="corporate_plan_view_form" model="ir.ui.view">
+        <field name="name">corporate.plan.form</field>
+        <field name="model">corporate.plan</field>
+        <field name="arch" type="xml">
+            <form string="Corporate Plan">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Plan Name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Pricing">
+                            <field name="code"/>
+                            <field name="base_price_per_employee"/>
+                            <field name="dependent_price"/>
+                        </group>
+                        <group string="Settings">
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Consultation Benefits">
+                            <field name="free_consultations"/>
+                            <field name="consultation_discount"/>
+                            <field name="consultation_limit"/>
+                            <field name="annual_limit"/>
+                        </group>
+                        <group string="Discounts">
+                            <field name="lab_discount"/>
+                            <field name="pharmacy_discount"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Coverage">
+                            <field name="health_checkup_included"/>
+                            <field name="dental_included"/>
+                            <field name="vision_included"/>
+                            <field name="mental_health_included"/>
+                        </group>
+                        <group string="Features">
+                            <field name="video_consultation"/>
+                            <field name="home_visit"/>
+                            <field name="priority_booking"/>
+                            <field name="dedicated_support"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="corporate_plan_action" model="ir.actions.act_window">
+        <field name="name">Corporate Plans</field>
+        <field name="res_model">corporate.plan</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- CORPORATE EMPLOYEE VIEWS                                     -->
+    <!-- ============================================================ -->
+    
+    <record id="corporate_employee_view_list" model="ir.ui.view">
+        <field name="name">corporate.employee.list</field>
+        <field name="model">corporate.employee</field>
+        <field name="arch" type="xml">
+            <list string="Corporate Employees">
+                <field name="employee_id_number"/>
+                <field name="name"/>
+                <field name="corporate_id"/>
+                <field name="email"/>
+                <field name="department"/>
+                <field name="dependent_count"/>
+                <field name="appointments_used"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="corporate_employee_view_form" model="ir.ui.view">
+        <field name="name">corporate.employee.form</field>
+        <field name="model">corporate.employee</field>
+        <field name="arch" type="xml">
+            <form string="Corporate Employee">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="employee_id_number"/>
+                            <field name="corporate_id"/>
+                            <field name="patient_id"/>
+                        </group>
+                        <group>
+                            <field name="email"/>
+                            <field name="phone"/>
+                            <field name="state"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="gender"/>
+                            <field name="date_of_birth"/>
+                        </group>
+                        <group>
+                            <field name="department"/>
+                            <field name="designation"/>
+                            <field name="joining_date"/>
+                            <field name="enrollment_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Dependents" name="dependents">
+                            <field name="dependent_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="relationship"/>
+                                    <field name="gender"/>
+                                    <field name="date_of_birth"/>
+                                    <field name="is_active"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Usage" name="usage">
+                            <group>
+                                <field name="appointments_used"/>
+                                <field name="benefits_used"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="corporate_employee_action" model="ir.actions.act_window">
+        <field name="name">Corporate Employees</field>
+        <field name="res_model">corporate.employee</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- HEALTH CHECKUP CAMPAIGN VIEWS                                -->
+    <!-- ============================================================ -->
+    
+    <record id="corporate_health_checkup_view_list" model="ir.ui.view">
+        <field name="name">corporate.health.checkup.list</field>
+        <field name="model">corporate.health.checkup</field>
+        <field name="arch" type="xml">
+            <list string="Health Checkup Campaigns">
+                <field name="name"/>
+                <field name="corporate_id"/>
+                <field name="scheduled_date"/>
+                <field name="lab_partner_id"/>
+                <field name="participant_count"/>
+                <field name="completed_count"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="corporate_health_checkup_view_form" model="ir.ui.view">
+        <field name="name">corporate.health.checkup.form</field>
+        <field name="model">corporate.health.checkup</field>
+        <field name="arch" type="xml">
+            <form string="Health Checkup Campaign">
+                <header>
+                    <button name="action_schedule" string="Schedule" type="object" invisible="state != 'draft'"/>
+                    <button name="action_start" string="Start" type="object" invisible="state != 'scheduled'"/>
+                    <button name="action_complete" string="Complete" type="object" class="btn-success" invisible="state != 'in_progress'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="corporate_id"/>
+                            <field name="scheduled_date"/>
+                            <field name="location"/>
+                        </group>
+                        <group>
+                            <field name="lab_partner_id"/>
+                            <field name="participant_count"/>
+                            <field name="completed_count"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Tests" name="tests">
+                            <field name="test_ids" widget="many2many_tags"/>
+                        </page>
+                        <page string="Participants" name="participants">
+                            <field name="employee_ids" widget="many2many_tags"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="corporate_health_checkup_action" model="ir.actions.act_window">
+        <field name="name">Health Checkup Campaigns</field>
+        <field name="res_model">corporate.health.checkup</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- INHERITED APPOINTMENT VIEW - Corporate Fields                -->
+    <!-- ============================================================ -->
+    <record id="doctor_appointment_view_form_corporate" model="ir.ui.view">
+        <field name="name">doctor.appointment.form.corporate</field>
+        <field name="model">doctor.appointment</field>
+        <field name="inherit_id" ref="doctor_marketplace.doctor_appointment_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='payment']" position="before">
+                <page string="Corporate" name="corporate" invisible="not is_corporate">
+                    <group>
+                        <group string="Corporate Booking">
+                            <field name="corporate_id"/>
+                            <field name="corporate_employee_id"
+                                   domain="[('corporate_id', '=', corporate_id)]"/>
+                            <field name="is_corporate"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

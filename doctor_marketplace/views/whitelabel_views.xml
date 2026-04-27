@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Whitelabel Config Views -->
+    <record id="view_whitelabel_config_form" model="ir.ui.view">
+        <field name="name">whitelabel.config.form</field>
+        <field name="model">whitelabel.config</field>
+        <field name="arch" type="xml">
+            <form string="White-label Configuration">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button string="Generate CSS" type="object" name="generate_css"
+                                class="oe_stat_button" icon="fa-css3"/>
+                    </div>
+                    <field name="logo" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1><field name="brand_name" placeholder="Brand Name"/></h1>
+                        <h3><field name="tagline" placeholder="Tagline"/></h3>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="is_active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Branding" name="branding">
+                            <group>
+                                <group string="Logos">
+                                    <field name="logo_small" widget="image"/>
+                                    <field name="favicon" widget="image"/>
+                                    <field name="email_header_logo" widget="image"/>
+                                </group>
+                                <group string="Colors">
+                                    <field name="primary_color" widget="color"/>
+                                    <field name="secondary_color" widget="color"/>
+                                    <field name="accent_color" widget="color"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Header/Footer">
+                                    <field name="header_bg_color" widget="color"/>
+                                    <field name="header_text_color" widget="color"/>
+                                    <field name="footer_bg_color" widget="color"/>
+                                    <field name="footer_text_color" widget="color"/>
+                                </group>
+                                <group string="Buttons">
+                                    <field name="button_primary_color" widget="color"/>
+                                    <field name="button_secondary_color" widget="color"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Typography">
+                                    <field name="font_family"/>
+                                    <field name="custom_font_url" invisible="font_family != 'custom'"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Contact" name="contact">
+                            <group>
+                                <group string="Support">
+                                    <field name="support_email"/>
+                                    <field name="support_phone"/>
+                                    <field name="support_hours"/>
+                                </group>
+                                <group string="Company">
+                                    <field name="company_name"/>
+                                    <field name="company_address"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Social Media">
+                                    <field name="facebook_url" widget="url"/>
+                                    <field name="twitter_url" widget="url"/>
+                                    <field name="instagram_url" widget="url"/>
+                                    <field name="linkedin_url" widget="url"/>
+                                    <field name="youtube_url" widget="url"/>
+                                </group>
+                                <group string="App Links">
+                                    <field name="android_app_url" widget="url"/>
+                                    <field name="ios_app_url" widget="url"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Legal" name="legal">
+                            <group>
+                                <group>
+                                    <field name="terms_url" widget="url"/>
+                                    <field name="privacy_url" widget="url"/>
+                                    <field name="refund_url" widget="url"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Features" name="features">
+                            <group>
+                                <group string="Core Features">
+                                    <field name="show_ratings"/>
+                                    <field name="show_reviews"/>
+                                    <field name="show_video_consultation"/>
+                                    <field name="show_home_visit"/>
+                                </group>
+                                <group string="Additional Features">
+                                    <field name="show_pharmacy"/>
+                                    <field name="show_lab"/>
+                                    <field name="show_subscription"/>
+                                    <field name="show_corporate"/>
+                                    <field name="show_insurance"/>
+                                    <field name="show_chatbot"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Localization" name="localization">
+                            <group>
+                                <group string="Currency">
+                                    <field name="default_currency_id"/>
+                                    <field name="supported_currency_ids" widget="many2many_tags"/>
+                                </group>
+                                <group string="Language">
+                                    <field name="default_language_id"/>
+                                    <field name="supported_language_ids" widget="many2many_tags"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Notifications" name="notifications">
+                            <group>
+                                <group string="Channels">
+                                    <field name="email_enabled"/>
+                                    <field name="sms_enabled"/>
+                                    <field name="whatsapp_enabled"/>
+                                    <field name="push_enabled"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Payments" name="payments">
+                            <group>
+                                <group string="Gateway">
+                                    <field name="payment_gateway"/>
+                                </group>
+                                <group string="Platform Fees">
+                                    <field name="platform_commission_percent"/>
+                                    <field name="minimum_payout"/>
+                                    <field name="payout_frequency"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Website" name="website">
+                            <group>
+                                <group string="SEO">
+                                    <field name="homepage_title"/>
+                                    <field name="meta_description"/>
+                                </group>
+                                <group string="Tracking">
+                                    <field name="google_analytics_id"/>
+                                    <field name="facebook_pixel_id"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Email Templates" name="email">
+                            <group>
+                                <field name="email_footer_text"/>
+                                <field name="email_signature"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_whitelabel_config_list" model="ir.ui.view">
+        <field name="name">whitelabel.config.list</field>
+        <field name="model">whitelabel.config</field>
+        <field name="arch" type="xml">
+            <list string="White-label Configurations">
+                <field name="brand_name"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="primary_color"/>
+                <field name="payment_gateway"/>
+                <field name="platform_commission_percent"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_whitelabel_config" model="ir.actions.act_window">
+        <field name="name">White-label Settings</field>
+        <field name="res_model">whitelabel.config</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- Multi-currency Config Views -->
+    <record id="view_multicurrency_config_form" model="ir.ui.view">
+        <field name="name">multicurrency.config.form</field>
+        <field name="model">multicurrency.config</field>
+        <field name="arch" type="xml">
+            <form string="Currency Configuration">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="currency_id"/>
+                            <field name="is_active"/>
+                        </group>
+                        <group>
+                            <field name="auto_update"/>
+                            <field name="update_frequency" invisible="not auto_update"/>
+                            <field name="rounding_method"/>
+                            <field name="symbol_position"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_multicurrency_config_list" model="ir.ui.view">
+        <field name="name">multicurrency.config.list</field>
+        <field name="model">multicurrency.config</field>
+        <field name="arch" type="xml">
+            <list string="Currency Configurations" editable="bottom">
+                <field name="name"/>
+                <field name="currency_id"/>
+                <field name="auto_update"/>
+                <field name="update_frequency"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_multicurrency_config" model="ir.actions.act_window">
+        <field name="name">Currency Settings</field>
+        <field name="res_model">multicurrency.config</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

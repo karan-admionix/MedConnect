@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        NOTE: The portal_my_home_appointments template (which injects the
+        "Appointments" entry into /my/home) is defined in:
+            views/website_appointment_templates.xml
+
+        It is NOT defined here to avoid duplicate XML ID conflicts on install.
+    -->
+</odoo>

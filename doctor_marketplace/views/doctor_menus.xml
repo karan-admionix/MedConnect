@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ROOT MENU -->
+    <menuitem
+            id="doctor_marketplace_menu_root"
+            name="MedConnect"
+            sequence="50"
+            web_icon="doctor_marketplace,static/description/icon.png"/>
+
+    <!-- ============================================================ -->
+    <!-- DASHBOARD — visible to all internal users                    -->
+    <!-- ============================================================ -->
+    <menuitem
+            id="doctor_marketplace_menu_dashboard"
+            name="Dashboard"
+            parent="doctor_marketplace_menu_root"
+            sequence="1"/>
+
+    <!-- ============================================================ -->
+    <!-- DOCTORS — Manager only                                       -->
+    <!-- ============================================================ -->
+    <menuitem
+            id="doctor_marketplace_menu_doctors"
+            name="Doctors"
+            parent="doctor_marketplace_menu_root"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="10"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_doctors_all"
+            name="All Doctors"
+            parent="doctor_marketplace_menu_doctors"
+            action="doctor_doctor_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="1"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_doctors_pending"
+            name="Pending Verification"
+            parent="doctor_marketplace_menu_doctors"
+            action="doctor_doctor_action_pending"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="2"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_schedules"
+            name="Schedules"
+            parent="doctor_marketplace_menu_doctors"
+            action="doctor_schedule_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="3"/>
+
+    <!-- ============================================================ -->
+    <!-- MY PROFILE — Doctor only (their own profile)                 -->
+    <!-- ============================================================ -->
+    <menuitem
+            id="doctor_marketplace_menu_my_profile"
+            name="My Profile"
+            parent="doctor_marketplace_menu_root"
+            action="doctor_doctor_action"
+            groups="doctor_marketplace.group_doctor_marketplace_doctor"
+            sequence="11"/>
+
+    <!-- ============================================================ -->
+    <!-- PATIENTS                                                     -->
+    <!-- Manager: all patients | Doctor: own patients only           -->
+    <!-- ============================================================ -->
+    <menuitem
+            id="doctor_marketplace_menu_patients"
+            name="Patients"
+            parent="doctor_marketplace_menu_root"
+            action="doctor_patient_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="20"/>
+
+    <!-- Doctor sees "My Patients" — filtered by record rule -->
+    <menuitem
+            id="doctor_marketplace_menu_my_patients"
+            name="My Patients"
+            parent="doctor_marketplace_menu_root"
+            action="doctor_patient_action"
+            groups="doctor_marketplace.group_doctor_marketplace_doctor"
+            sequence="21"/>
+
+    <!-- ============================================================ -->
+    <!-- APPOINTMENTS                                                 -->
+    <!-- Manager: all appointments | Doctor: own appointments only   -->
+    <!-- ============================================================ -->
+    <menuitem
+            id="doctor_marketplace_menu_appointments"
+            name="Appointments"
+            parent="doctor_marketplace_menu_root"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="30"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_appointments_all"
+            name="All Appointments"
+            parent="doctor_marketplace_menu_appointments"
+            action="doctor_appointment_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="1"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_appointments_today"
+            name="Today's Appointments"
+            parent="doctor_marketplace_menu_appointments"
+            action="doctor_appointment_action_today"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="2"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_waitlist"
+            name="Waitlist"
+            parent="doctor_marketplace_menu_appointments"
+            action="doctor_waitlist_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="3"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_matching"
+            name="Doctor Matching"
+            parent="doctor_marketplace_menu_appointments"
+            action="doctor_match_request_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="4"/>
+
+    <!-- Doctor sees "My Appointments" — filtered by record rule -->
+    <menuitem
+            id="doctor_marketplace_menu_my_appointments"
+            name="My Appointments"
+            parent="doctor_marketplace_menu_root"
+            action="doctor_appointment_action"
+            groups="doctor_marketplace.group_doctor_marketplace_doctor"
+            sequence="31"/>
+
+    <!-- Today's appointments for doctor -->
+    <menuitem
+            id="doctor_marketplace_menu_my_appointments_today"
+            name="Today's Appointments"
+            parent="doctor_marketplace_menu_root"
+            action="doctor_appointment_action_today"
+            groups="doctor_marketplace.group_doctor_marketplace_doctor"
+            sequence="32"/>
+
+    <!-- ============================================================ -->
+    <!-- REVIEWS — Doctor sees own reviews only (record rule)        -->
+    <!-- ============================================================ -->
+    <menuitem
+            id="doctor_marketplace_menu_reviews"
+            name="Reviews"
+            parent="doctor_marketplace_menu_root"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="40"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_reviews_all"
+            name="All Reviews"
+            parent="doctor_marketplace_menu_reviews"
+            action="doctor_review_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="1"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_reviews_pending"
+            name="Pending Reviews"
+            parent="doctor_marketplace_menu_reviews"
+            action="doctor_review_action_pending"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="2"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_my_reviews"
+            name="My Reviews"
+            parent="doctor_marketplace_menu_root"
+            action="doctor_review_action"
+            groups="doctor_marketplace.group_doctor_marketplace_doctor"
+            sequence="41"/>
+
+    <!-- ============================================================ -->
+    <!-- EARNINGS — Doctor sees own earnings only (record rule)      -->
+    <!-- ============================================================ -->
+    <menuitem
+            id="doctor_marketplace_menu_finance"
+            name="Finance"
+            parent="doctor_marketplace_menu_root"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="50"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_earnings"
+            name="Earnings"
+            parent="doctor_marketplace_menu_finance"
+            action="doctor_earning_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="1"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_payouts"
+            name="Payouts"
+            parent="doctor_marketplace_menu_finance"
+            action="doctor_payout_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="2"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_payouts_pending"
+            name="Pending Payouts"
+            parent="doctor_marketplace_menu_finance"
+            action="doctor_payout_action_pending"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="3"/>
+
+    <!-- Doctor sees own earnings -->
+    <menuitem
+            id="doctor_marketplace_menu_my_earnings"
+            name="My Earnings"
+            parent="doctor_marketplace_menu_root"
+            action="doctor_earning_action"
+            groups="doctor_marketplace.group_doctor_marketplace_doctor"
+            sequence="51"/>
+
+    <!-- ============================================================ -->
+    <!-- ALL BELOW — Manager/Admin only                               -->
+    <!-- ============================================================ -->
+
+    <!-- Partners -->
+    <menuitem
+            id="doctor_marketplace_menu_partners"
+            name="Partners"
+            parent="doctor_marketplace_menu_root"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="45"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_pharmacy_partners"
+            name="Pharmacy Partners"
+            parent="doctor_marketplace_menu_partners"
+            action="pharmacy_partner_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="1"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_pharmacy_orders"
+            name="Pharmacy Orders"
+            parent="doctor_marketplace_menu_partners"
+            action="pharmacy_order_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="2"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_lab_partners"
+            name="Lab Partners"
+            parent="doctor_marketplace_menu_partners"
+            action="lab_partner_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="3"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_lab_tests"
+            name="Lab Tests"
+            parent="doctor_marketplace_menu_partners"
+            action="lab_test_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="4"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_lab_bookings"
+            name="Lab Bookings"
+            parent="doctor_marketplace_menu_partners"
+            action="lab_booking_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="5"/>
+
+    <!-- Subscriptions -->
+    <menuitem
+            id="doctor_marketplace_menu_subscriptions"
+            name="Subscriptions"
+            parent="doctor_marketplace_menu_root"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="60"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_patient_subscriptions"
+            name="Patient Subscriptions"
+            parent="doctor_marketplace_menu_subscriptions"
+            action="patient_subscription_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="1"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_subscription_plans"
+            name="Plans"
+            parent="doctor_marketplace_menu_subscriptions"
+            action="subscription_plan_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="2"/>
+
+    <!-- Health Records -->
+    <menuitem
+            id="doctor_marketplace_menu_health_records"
+            name="Health Records"
+            parent="doctor_marketplace_menu_root"
+            action="patient_health_record_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="70"/>
+
+    <!-- Corporate Health -->
+    <menuitem
+            id="doctor_marketplace_menu_corporate"
+            name="Corporate Health"
+            parent="doctor_marketplace_menu_root"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="75"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_corporate_accounts"
+            name="Corporate Accounts"
+            parent="doctor_marketplace_menu_corporate"
+            action="corporate_account_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="1"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_corporate_plans"
+            name="Corporate Plans"
+            parent="doctor_marketplace_menu_corporate"
+            action="corporate_plan_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="2"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_corporate_employees"
+            name="Employees"
+            parent="doctor_marketplace_menu_corporate"
+            action="corporate_employee_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="3"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_health_checkups"
+            name="Health Checkup Campaigns"
+            parent="doctor_marketplace_menu_corporate"
+            action="corporate_health_checkup_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="4"/>
+
+    <!-- AI Assistant -->
+    <menuitem
+            id="doctor_marketplace_menu_ai"
+            name="AI Assistant"
+            parent="doctor_marketplace_menu_root"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="80"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_chatbot_conversations"
+            name="Chatbot Conversations"
+            parent="doctor_marketplace_menu_ai"
+            action="chatbot_conversation_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="1"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_chatbot_faq"
+            name="Chatbot FAQs"
+            parent="doctor_marketplace_menu_ai"
+            action="chatbot_faq_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="2"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_symptom_checks"
+            name="Symptom Checks"
+            parent="doctor_marketplace_menu_ai"
+            action="symptom_check_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="3"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_symptoms"
+            name="Symptoms Database"
+            parent="doctor_marketplace_menu_ai"
+            action="medical_symptom_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="4"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_conditions"
+            name="Medical Conditions"
+            parent="doctor_marketplace_menu_ai"
+            action="medical_condition_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="5"/>
+
+    <!-- Insurance -->
+    <menuitem
+            id="doctor_marketplace_menu_insurance"
+            name="Insurance"
+            parent="doctor_marketplace_menu_root"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="85"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_insurance_providers"
+            name="Insurance Providers"
+            parent="doctor_marketplace_menu_insurance"
+            action="action_insurance_provider"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="1"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_insurance_plans"
+            name="Insurance Plans"
+            parent="doctor_marketplace_menu_insurance"
+            action="action_insurance_plan"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="2"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_patient_policies"
+            name="Patient Policies"
+            parent="doctor_marketplace_menu_insurance"
+            action="action_patient_insurance_policy"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="3"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_insurance_claims"
+            name="All Claims"
+            parent="doctor_marketplace_menu_insurance"
+            action="action_insurance_claim"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="4"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_insurance_claims_pending"
+            name="Pending Claims"
+            parent="doctor_marketplace_menu_insurance"
+            action="action_insurance_claim_pending"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="5"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_preauth"
+            name="Pre-authorizations"
+            parent="doctor_marketplace_menu_insurance"
+            action="action_insurance_preauth"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="6"/>
+
+    <!-- Analytics -->
+    <menuitem
+            id="doctor_marketplace_menu_analytics"
+            name="Analytics"
+            parent="doctor_marketplace_menu_root"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="90"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_platform_kpi"
+            name="Platform KPIs"
+            parent="doctor_marketplace_menu_analytics"
+            action="action_platform_kpi"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="1"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_doctor_performance"
+            name="Doctor Performance"
+            parent="doctor_marketplace_menu_analytics"
+            action="action_doctor_performance_report"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="2"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_revenue_analysis"
+            name="Revenue Analysis"
+            parent="doctor_marketplace_menu_analytics"
+            action="action_revenue_analysis_report"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="3"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_patient_analytics"
+            name="Patient Analytics"
+            parent="doctor_marketplace_menu_analytics"
+            action="action_patient_analytics_report"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="4"/>
+
+    <!-- Configuration -->
+    <menuitem
+            id="doctor_marketplace_menu_config"
+            name="Configuration"
+            parent="doctor_marketplace_menu_root"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="100"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_specializations"
+            name="Specializations"
+            parent="doctor_marketplace_menu_config"
+            action="doctor_specialization_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="1"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_consultation_types"
+            name="Consultation Types"
+            parent="doctor_marketplace_menu_config"
+            action="doctor_consultation_type_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="2"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_badges"
+            name="Doctor Badges"
+            parent="doctor_marketplace_menu_config"
+            action="doctor_badge_action"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="3"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_whitelabel"
+            name="White-label Settings"
+            parent="doctor_marketplace_menu_config"
+            action="action_whitelabel_config"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="10"/>
+
+    <menuitem
+            id="doctor_marketplace_menu_currency_config"
+            name="Currency Settings"
+            parent="doctor_marketplace_menu_config"
+            action="action_multicurrency_config"
+            groups="doctor_marketplace.group_doctor_marketplace_manager"
+            sequence="11"/>
+
+</odoo>

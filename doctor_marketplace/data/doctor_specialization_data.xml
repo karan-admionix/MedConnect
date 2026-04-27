@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Medical Specializations -->
+        <record id="specialization_general" model="doctor.specialization">
+            <field name="name">General Physician</field>
+            <field name="code">GP</field>
+            <field name="sequence">1</field>
+            <field name="icon">fa-user-md</field>
+            <field name="featured">True</field>
+            <field name="description">General medicine and primary healthcare</field>
+        </record>
+
+        <record id="specialization_cardiology" model="doctor.specialization">
+            <field name="name">Cardiology</field>
+            <field name="code">CARDIO</field>
+            <field name="sequence">2</field>
+            <field name="icon">fa-heartbeat</field>
+            <field name="featured">True</field>
+            <field name="description">Heart and cardiovascular system</field>
+        </record>
+
+        <record id="specialization_dermatology" model="doctor.specialization">
+            <field name="name">Dermatology</field>
+            <field name="code">DERM</field>
+            <field name="sequence">3</field>
+            <field name="icon">fa-hand-paper-o</field>
+            <field name="featured">True</field>
+            <field name="description">Skin, hair, and nails</field>
+        </record>
+
+        <record id="specialization_orthopedics" model="doctor.specialization">
+            <field name="name">Orthopedics</field>
+            <field name="code">ORTHO</field>
+            <field name="sequence">4</field>
+            <field name="icon">fa-wheelchair</field>
+            <field name="featured">True</field>
+            <field name="description">Bones, joints, and muscles</field>
+        </record>
+
+        <record id="specialization_pediatrics" model="doctor.specialization">
+            <field name="name">Pediatrics</field>
+            <field name="code">PED</field>
+            <field name="sequence">5</field>
+            <field name="icon">fa-child</field>
+            <field name="featured">True</field>
+            <field name="description">Children's health</field>
+        </record>
+
+        <record id="specialization_gynecology" model="doctor.specialization">
+            <field name="name">Gynecology</field>
+            <field name="code">GYN</field>
+            <field name="sequence">6</field>
+            <field name="icon">fa-venus</field>
+            <field name="featured">True</field>
+            <field name="description">Women's reproductive health</field>
+        </record>
+
+        <record id="specialization_ophthalmology" model="doctor.specialization">
+            <field name="name">Ophthalmology</field>
+            <field name="code">OPH</field>
+            <field name="sequence">7</field>
+            <field name="icon">fa-eye</field>
+            <field name="description">Eye care and vision</field>
+        </record>
+
+        <record id="specialization_ent" model="doctor.specialization">
+            <field name="name">ENT</field>
+            <field name="code">ENT</field>
+            <field name="sequence">8</field>
+            <field name="icon">fa-deaf</field>
+            <field name="description">Ear, nose, and throat</field>
+        </record>
+
+        <record id="specialization_neurology" model="doctor.specialization">
+            <field name="name">Neurology</field>
+            <field name="code">NEURO</field>
+            <field name="sequence">9</field>
+            <field name="icon">fa-brain</field>
+            <field name="description">Brain and nervous system</field>
+        </record>
+
+        <record id="specialization_psychiatry" model="doctor.specialization">
+            <field name="name">Psychiatry</field>
+            <field name="code">PSY</field>
+            <field name="sequence">10</field>
+            <field name="icon">fa-comments</field>
+            <field name="description">Mental health</field>
+        </record>
+
+        <record id="specialization_dentistry" model="doctor.specialization">
+            <field name="name">Dentistry</field>
+            <field name="code">DENT</field>
+            <field name="sequence">11</field>
+            <field name="icon">fa-tooth</field>
+            <field name="featured">True</field>
+            <field name="description">Dental and oral health</field>
+        </record>
+
+        <record id="specialization_gastroenterology" model="doctor.specialization">
+            <field name="name">Gastroenterology</field>
+            <field name="code">GASTRO</field>
+            <field name="sequence">12</field>
+            <field name="icon">fa-medkit</field>
+            <field name="description">Digestive system</field>
+        </record>
+
+    </data>
+</odoo>

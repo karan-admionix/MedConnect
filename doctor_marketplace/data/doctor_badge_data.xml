@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Doctor Badges -->
+        <record id="badge_verified" model="doctor.badge">
+            <field name="name">Verified Doctor</field>
+            <field name="code">VERIFIED</field>
+            <field name="level">verified</field>
+            <field name="icon">fa-check-circle</field>
+            <field name="color">#2196F3</field>
+            <field name="description">Documents verified by platform</field>
+            <field name="auto_assign">False</field>
+            <field name="search_priority">5</field>
+        </record>
+
+        <record id="badge_certified" model="doctor.badge">
+            <field name="name">Certified Professional</field>
+            <field name="code">CERTIFIED</field>
+            <field name="level">certified</field>
+            <field name="icon">fa-certificate</field>
+            <field name="color">#4CAF50</field>
+            <field name="description">Completed 50+ consultations with 4+ rating</field>
+            <field name="auto_assign">True</field>
+            <field name="min_rating">4.0</field>
+            <field name="min_consultations">50</field>
+            <field name="search_priority">10</field>
+            <field name="premium_percentage">5</field>
+        </record>
+
+        <record id="badge_excellence" model="doctor.badge">
+            <field name="name">Excellence Award</field>
+            <field name="code">EXCELLENCE</field>
+            <field name="level">excellence</field>
+            <field name="icon">fa-award</field>
+            <field name="color">#FF9800</field>
+            <field name="description">Top performer with 200+ consultations and 4.5+ rating</field>
+            <field name="auto_assign">True</field>
+            <field name="min_rating">4.5</field>
+            <field name="min_consultations">200</field>
+            <field name="min_reviews">50</field>
+            <field name="requires_audit">True</field>
+            <field name="search_priority">20</field>
+            <field name="premium_percentage">10</field>
+            <field name="featured_eligible">True</field>
+        </record>
+
+        <record id="badge_master" model="doctor.badge">
+            <field name="name">Master Practitioner</field>
+            <field name="code">MASTER</field>
+            <field name="level">master</field>
+            <field name="icon">fa-trophy</field>
+            <field name="color">#9C27B0</field>
+            <field name="description">Elite doctors with exceptional track record</field>
+            <field name="auto_assign">True</field>
+            <field name="min_rating">4.8</field>
+            <field name="min_consultations">500</field>
+            <field name="min_reviews">100</field>
+            <field name="min_months_active">12</field>
+            <field name="requires_audit">True</field>
+            <field name="search_priority">50</field>
+            <field name="premium_percentage">20</field>
+            <field name="featured_eligible">True</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List View -->
+    <record id="doctor_patient_view_list" model="ir.ui.view">
+        <field name="name">doctor.patient.list</field>
+        <field name="model">doctor.patient</field>
+        <field name="arch" type="xml">
+            <list string="Patients">
+                <field name="name"/>
+                <field name="email"/>
+                <field name="mobile"/>
+                <field name="gender"/>
+                <field name="age"/>
+                <field name="city"/>
+                <field name="appointment_count"/>
+                <field name="subscription_plan_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="doctor_patient_view_form" model="ir.ui.view">
+        <field name="name">doctor.patient.form</field>
+        <field name="model">doctor.patient</field>
+        <field name="arch" type="xml">
+            <form string="Patient">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_appointments" type="object" class="oe_stat_button"
+                                icon="fa-calendar">
+                            <field name="appointment_count" widget="statinfo" string="Appointments"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-users">
+                            <field name="family_member_count" widget="statinfo" string="Family"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-money">
+                            <field name="total_spent" widget="statinfo" string="Total Spent"/>
+                        </button>
+                    </div>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Patient Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Contact">
+                            <field name="email"/>
+                            <field name="mobile"/>
+                            <field name="phone"/>
+                        </group>
+                        <group string="Personal">
+                            <field name="gender"/>
+                            <field name="date_of_birth"/>
+                            <field name="age"/>
+                            <field name="blood_group"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Address" name="address">
+                            <group>
+                                <group>
+                                    <field name="street"/>
+                                    <field name="city"/>
+                                    <field name="zip_code"/>
+                                </group>
+                                <group>
+                                    <field name="state_id"/>
+                                    <field name="country_id"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Medical Info" name="medical">
+                            <group>
+                                <field name="allergies" placeholder="List known allergies..."/>
+                                <field name="chronic_conditions" placeholder="List chronic conditions..."/>
+                                <field name="current_medications" placeholder="List current medications..."/>
+                            </group>
+                        </page>
+                        <page string="Emergency Contact" name="emergency">
+                            <group>
+                                <group>
+                                    <field name="emergency_contact_name"/>
+                                    <field name="emergency_contact_phone"/>
+                                    <field name="emergency_contact_relation"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Family Members" name="family">
+                            <field name="family_member_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="relationship"/>
+                                    <field name="gender"/>
+                                    <field name="age"/>
+                                    <field name="appointment_count"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Subscription" name="subscription">
+                            <group>
+                                <group>
+                                    <field name="subscription_id"/>
+                                    <field name="subscription_plan_id"/>
+                                    <field name="loyalty_points"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Statistics" name="stats">
+                            <group>
+                                <group>
+                                    <field name="completed_appointments"/>
+                                    <field name="no_show_count"/>
+                                    <field name="cancellation_count"/>
+                                </group>
+                                <group>
+                                    <field name="risk_score" widget="progressbar"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="doctor_patient_action" model="ir.actions.act_window">
+        <field name="name">Patients</field>
+        <field name="res_model">doctor.patient</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Register your first patient</p>
+        </field>
+    </record>
+
+</odoo>

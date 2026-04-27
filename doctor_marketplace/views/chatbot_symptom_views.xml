@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- ============================================================ -->
+    <!-- CHATBOT CONVERSATION VIEWS                                   -->
+    <!-- ============================================================ -->
+    
+    <record id="chatbot_conversation_view_list" model="ir.ui.view">
+        <field name="name">chatbot.conversation.list</field>
+        <field name="model">chatbot.conversation</field>
+        <field name="arch" type="xml">
+            <list string="Conversations">
+                <field name="name"/>
+                <field name="start_time"/>
+                <field name="patient_id"/>
+                <field name="context_type"/>
+                <field name="message_count"/>
+                <field name="outcome"/>
+                <field name="rating"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="chatbot_conversation_view_form" model="ir.ui.view">
+        <field name="name">chatbot.conversation.form</field>
+        <field name="model">chatbot.conversation</field>
+        <field name="arch" type="xml">
+            <form string="Conversation">
+                <header>
+                    <button name="action_close" string="Close" type="object" invisible="state != 'active'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="patient_id"/>
+                            <field name="context_type"/>
+                            <field name="start_time"/>
+                            <field name="end_time"/>
+                            <field name="duration_minutes"/>
+                        </group>
+                        <group>
+                            <field name="outcome"/>
+                            <field name="escalated_to"/>
+                            <field name="appointment_id"/>
+                            <field name="symptom_check_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Messages" name="messages">
+                            <field name="message_ids">
+                                <list>
+                                    <field name="timestamp"/>
+                                    <field name="sender"/>
+                                    <field name="message"/>
+                                    <field name="intent_detected"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Feedback" name="feedback">
+                            <group>
+                                <field name="rating" widget="priority"/>
+                                <field name="feedback"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="chatbot_conversation_action" model="ir.actions.act_window">
+        <field name="name">Chatbot Conversations</field>
+        <field name="res_model">chatbot.conversation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- CHATBOT FAQ VIEWS                                            -->
+    <!-- ============================================================ -->
+    
+    <record id="chatbot_faq_view_list" model="ir.ui.view">
+        <field name="name">chatbot.faq.list</field>
+        <field name="model">chatbot.faq</field>
+        <field name="arch" type="xml">
+            <list string="FAQs">
+                <field name="sequence" widget="handle"/>
+                <field name="question"/>
+                <field name="category"/>
+                <field name="helpful_count"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="chatbot_faq_view_form" model="ir.ui.view">
+        <field name="name">chatbot.faq.form</field>
+        <field name="model">chatbot.faq</field>
+        <field name="arch" type="xml">
+            <form string="FAQ">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="question"/>
+                            <field name="category"/>
+                            <field name="keywords"/>
+                        </group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="helpful_count"/>
+                            <field name="not_helpful_count"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="answer"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="chatbot_faq_action" model="ir.actions.act_window">
+        <field name="name">Chatbot FAQs</field>
+        <field name="res_model">chatbot.faq</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- SYMPTOM VIEWS                                                -->
+    <!-- ============================================================ -->
+    
+    <record id="medical_symptom_view_list" model="ir.ui.view">
+        <field name="name">medical.symptom.list</field>
+        <field name="model">medical.symptom</field>
+        <field name="arch" type="xml">
+            <list string="Symptoms">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="body_system"/>
+                <field name="severity_weight"/>
+                <field name="is_emergency"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="medical_symptom_view_form" model="ir.ui.view">
+        <field name="name">medical.symptom.form</field>
+        <field name="model">medical.symptom</field>
+        <field name="arch" type="xml">
+            <form string="Symptom">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Symptom Name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="body_system"/>
+                        </group>
+                        <group>
+                            <field name="severity_weight"/>
+                            <field name="is_emergency"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Details" name="details">
+                            <group>
+                                <field name="description"/>
+                            </group>
+                            <group>
+                                <field name="followup_questions"/>
+                                <field name="emergency_keywords" invisible="not is_emergency"/>
+                            </group>
+                        </page>
+                        <page string="Relations" name="relations">
+                            <group>
+                                <field name="specialization_ids" widget="many2many_tags"/>
+                                <field name="related_symptom_ids" widget="many2many_tags"/>
+                                <field name="condition_ids" widget="many2many_tags"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="medical_symptom_action" model="ir.actions.act_window">
+        <field name="name">Symptoms Database</field>
+        <field name="res_model">medical.symptom</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- MEDICAL CONDITION VIEWS                                      -->
+    <!-- ============================================================ -->
+    
+    <record id="medical_condition_view_list" model="ir.ui.view">
+        <field name="name">medical.condition.list</field>
+        <field name="model">medical.condition</field>
+        <field name="arch" type="xml">
+            <list string="Conditions">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="severity"/>
+                <field name="is_emergency"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="medical_condition_view_form" model="ir.ui.view">
+        <field name="name">medical.condition.form</field>
+        <field name="model">medical.condition</field>
+        <field name="arch" type="xml">
+            <form string="Medical Condition">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="severity"/>
+                        </group>
+                        <group>
+                            <field name="is_emergency"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Symptoms" name="symptoms">
+                            <group>
+                                <field name="primary_symptom_ids" widget="many2many_tags"/>
+                                <field name="secondary_symptom_ids" widget="many2many_tags"/>
+                            </group>
+                            <field name="specialization_ids" widget="many2many_tags"/>
+                        </page>
+                        <page string="Advice" name="advice">
+                            <group>
+                                <field name="description"/>
+                                <field name="home_care_advice"/>
+                                <field name="when_to_see_doctor"/>
+                                <field name="emergency_signs" invisible="not is_emergency"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="medical_condition_action" model="ir.actions.act_window">
+        <field name="name">Medical Conditions</field>
+        <field name="res_model">medical.condition</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- SYMPTOM CHECK VIEWS                                          -->
+    <!-- ============================================================ -->
+    
+    <record id="symptom_check_view_list" model="ir.ui.view">
+        <field name="name">symptom.check.list</field>
+        <field name="model">symptom.check</field>
+        <field name="arch" type="xml">
+            <list string="Symptom Checks">
+                <field name="name"/>
+                <field name="create_date"/>
+                <field name="patient_id"/>
+                <field name="primary_symptom_id"/>
+                <field name="urgency_level" widget="badge" decoration-danger="urgency_level == 'emergency'" decoration-warning="urgency_level == 'high'"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="symptom_check_view_form" model="ir.ui.view">
+        <field name="name">symptom.check.form</field>
+        <field name="model">symptom.check</field>
+        <field name="arch" type="xml">
+            <form string="Symptom Check">
+                <header>
+                    <button name="action_analyze" string="Analyze Symptoms" type="object" class="btn-primary" invisible="state != 'in_progress'"/>
+                    <button name="action_match_doctors" string="Find Doctors" type="object" invisible="state != 'completed'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-danger" role="alert" invisible="not emergency_warning">
+                        <strong>Emergency Warning!</strong> Based on the symptoms, immediate medical attention may be required.
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="patient_id"/>
+                            <field name="patient_age" invisible="patient_id"/>
+                            <field name="patient_gender" invisible="patient_id"/>
+                        </group>
+                        <group>
+                            <field name="symptom_duration"/>
+                            <field name="symptom_severity"/>
+                            <field name="urgency_level"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Symptoms" name="symptoms">
+                            <group>
+                                <field name="primary_symptom_id"/>
+                                <field name="symptom_ids" widget="many2many_tags"/>
+                            </group>
+                            <group>
+                                <field name="additional_notes"/>
+                            </group>
+                        </page>
+                        <page string="Results" name="results" invisible="state == 'in_progress'">
+                            <group>
+                                <field name="possible_condition_ids" widget="many2many_tags"/>
+                                <field name="recommended_specialization_ids" widget="many2many_tags"/>
+                            </group>
+                            <group>
+                                <field name="advice"/>
+                            </group>
+                            <group>
+                                <field name="doctor_matched_ids" widget="many2many_tags"/>
+                                <field name="appointment_id"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="symptom_check_action" model="ir.actions.act_window">
+        <field name="name">Symptom Checks</field>
+        <field name="res_model">symptom.check</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

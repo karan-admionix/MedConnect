@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List View -->
+    <record id="doctor_appointment_view_list" model="ir.ui.view">
+        <field name="name">doctor.appointment.list</field>
+        <field name="model">doctor.appointment</field>
+        <field name="arch" type="xml">
+            <list string="Appointments" decoration-success="state == 'completed'"
+                  decoration-warning="state == 'confirmed'" decoration-danger="state in ('cancelled', 'no_show')">
+                <field name="name"/>
+                <field name="appointment_date"/>
+                <field name="appointment_time_display"/>
+                <field name="doctor_id"/>
+                <field name="patient_id"/>
+                <field name="consultation_type"/>
+                <field name="consultation_mode"/>
+                <field name="final_amount"/>
+                <field name="payment_status" widget="badge"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="doctor_appointment_view_form" model="ir.ui.view">
+        <field name="name">doctor.appointment.form</field>
+        <field name="model">doctor.appointment</field>
+        <field name="arch" type="xml">
+            <form string="Appointment">
+                <header>
+                    <button name="action_confirm" string="Confirm" type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_start" string="Start Consultation" type="object" class="btn-primary"
+                            invisible="state != 'confirmed'"/>
+                    <button name="action_complete" string="Complete" type="object" class="btn-success"
+                            invisible="state not in ('confirmed', 'in_progress')"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            invisible="state not in ('draft', 'confirmed')"/>
+                    <button name="action_no_show" string="No Show" type="object" class="btn-warning"
+                            invisible="state != 'confirmed'"
+                            groups="doctor_marketplace.group_doctor_marketplace_manager"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,in_progress,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Appointment Details">
+                            <field name="doctor_id"/>
+                            <field name="specialization_id"/>
+                            <field name="patient_id"/>
+                            <field name="family_member_id" domain="[('patient_id', '=', patient_id)]"/>
+                        </group>
+                        <group string="Schedule">
+                            <field name="appointment_date"/>
+                            <field name="appointment_time" widget="float_time"/>
+                            <field name="duration"/>
+                            <field name="consultation_type"/>
+                            <field name="consultation_mode"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Reason">
+                            <field name="reason" nolabel="1" placeholder="Reason for consultation..."/>
+                        </group>
+                        <group string="Symptoms">
+                            <field name="symptoms" nolabel="1" placeholder="Describe symptoms..."/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Payment" name="payment">
+                            <group>
+                                <group>
+                                    <field name="consultation_fee"/>
+                                    <field name="discount_amount"/>
+                                    <field name="subscription_discount"/>
+                                    <field name="final_amount"/>
+                                </group>
+                                <group>
+                                    <field name="payment_status"/>
+                                    <field name="payment_method"/>
+                                    <field name="payment_reference"/>
+                                    <field name="payment_date"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="platform_commission_percent"/>
+                                    <field name="platform_commission"/>
+                                    <field name="doctor_payout"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Consultation Notes" name="notes"
+                              invisible="state not in ('in_progress', 'completed')">
+                            <group>
+                                <field name="diagnosis" placeholder="Diagnosis..."/>
+                            </group>
+                            <field name="prescription" placeholder="Write prescription..."/>
+                            <group>
+                                <group>
+                                    <field name="follow_up_required"/>
+                                    <field name="follow_up_date" invisible="not follow_up_required"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="doctor_notes" placeholder="Additional notes..."/>
+                            </group>
+                        </page>
+                        <page string="Cancellation" name="cancellation"
+                              invisible="state not in ('cancelled', 'no_show')">
+                            <group>
+                                <group>
+                                    <field name="cancelled_by"/>
+                                    <field name="cancellation_reason"/>
+                                </group>
+                                <group>
+                                    <field name="refund_amount"/>
+                                    <field name="refund_reason"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Calendar View -->
+    <record id="doctor_appointment_view_calendar" model="ir.ui.view">
+        <field name="name">doctor.appointment.calendar</field>
+        <field name="model">doctor.appointment</field>
+        <field name="arch" type="xml">
+            <calendar string="Appointments" date_start="appointment_date" color="doctor_id" mode="month">
+                <field name="patient_id"/>
+                <field name="doctor_id"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="doctor_appointment_action" model="ir.actions.act_window">
+        <field name="name">Appointments</field>
+        <field name="res_model">doctor.appointment</field>
+        <field name="view_mode">list,calendar,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first appointment</p>
+        </field>
+    </record>
+
+    <!-- Today's Appointments Action -->
+    <record id="doctor_appointment_action_today" model="ir.actions.act_window">
+        <field name="name">Today's Appointments</field>
+        <field name="res_model">doctor.appointment</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('appointment_date', '=', context_today())]</field>
+    </record>
+
+</odoo>

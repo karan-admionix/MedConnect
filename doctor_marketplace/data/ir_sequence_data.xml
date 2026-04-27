@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Appointment Sequence -->
+        <record id="sequence_doctor_appointment" model="ir.sequence">
+            <field name="name">Doctor Appointment</field>
+            <field name="code">doctor.appointment</field>
+            <field name="prefix">APT/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Payout Sequence -->
+        <record id="sequence_doctor_payout" model="ir.sequence">
+            <field name="name">Doctor Payout</field>
+            <field name="code">doctor.payout</field>
+            <field name="prefix">PAY/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Waitlist Sequence -->
+        <record id="sequence_doctor_waitlist" model="ir.sequence">
+            <field name="name">Doctor Waitlist</field>
+            <field name="code">doctor.waitlist</field>
+            <field name="prefix">WL/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Subscription Sequence -->
+        <record id="sequence_patient_subscription" model="ir.sequence">
+            <field name="name">Patient Subscription</field>
+            <field name="code">patient.subscription</field>
+            <field name="prefix">SUB/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Phase 3 Sequences -->
+
+        <!-- Pharmacy Partner Sequence -->
+        <record id="sequence_pharmacy_partner" model="ir.sequence">
+            <field name="name">Pharmacy Partner</field>
+            <field name="code">pharmacy.partner</field>
+            <field name="prefix">PHR/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Lab Partner Sequence -->
+        <record id="sequence_lab_partner" model="ir.sequence">
+            <field name="name">Lab Partner</field>
+            <field name="code">lab.partner</field>
+            <field name="prefix">LAB/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Lab Booking Sequence -->
+        <record id="sequence_lab_booking" model="ir.sequence">
+            <field name="name">Lab Booking</field>
+            <field name="code">lab.booking</field>
+            <field name="prefix">LB/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Pharmacy Order Sequence -->
+        <record id="sequence_pharmacy_order" model="ir.sequence">
+            <field name="name">Pharmacy Order</field>
+            <field name="code">pharmacy.order</field>
+            <field name="prefix">PO/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Chatbot Conversation Sequence -->
+        <record id="sequence_chatbot_conversation" model="ir.sequence">
+            <field name="name">Chatbot Conversation</field>
+            <field name="code">chatbot.conversation</field>
+            <field name="prefix">CHAT/%(year)s/</field>
+            <field name="padding">6</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Symptom Check Sequence -->
+        <record id="sequence_symptom_check" model="ir.sequence">
+            <field name="name">Symptom Check</field>
+            <field name="code">symptom.check</field>
+            <field name="prefix">SC/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Doctor Match Request Sequence -->
+        <record id="sequence_doctor_match_request" model="ir.sequence">
+            <field name="name">Doctor Match Request</field>
+            <field name="code">doctor.match.request</field>
+            <field name="prefix">DMR/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Corporate Account Sequence -->
+        <record id="sequence_corporate_account" model="ir.sequence">
+            <field name="name">Corporate Account</field>
+            <field name="code">corporate.account</field>
+            <field name="prefix">CORP/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Phase 4 Sequences -->
+
+        <!-- Insurance Claim Sequence -->
+        <record id="sequence_insurance_claim" model="ir.sequence">
+            <field name="name">Insurance Claim</field>
+            <field name="code">insurance.claim</field>
+            <field name="prefix">CLM/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Insurance Pre-auth Sequence -->
+        <record id="sequence_insurance_preauth" model="ir.sequence">
+            <field name="name">Insurance Pre-authorization</field>
+            <field name="code">insurance.preauth</field>
+            <field name="prefix">PA/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

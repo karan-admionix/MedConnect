@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List View -->
+    <record id="doctor_review_view_list" model="ir.ui.view">
+        <field name="name">doctor.review.list</field>
+        <field name="model">doctor.review</field>
+        <field name="arch" type="xml">
+            <list string="Reviews">
+                <field name="create_date"/>
+                <field name="doctor_id"/>
+                <field name="patient_id"/>
+                <field name="rating"/>
+                <field name="title"/>
+                <field name="is_verified_booking"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="doctor_review_view_form" model="ir.ui.view">
+        <field name="name">doctor.review.form</field>
+        <field name="model">doctor.review</field>
+        <field name="arch" type="xml">
+            <form string="Review">
+                <header>
+                    <button name="action_approve" string="Approve" type="object" class="btn-success"
+                            invisible="state != 'pending'"
+                            groups="doctor_marketplace.group_doctor_marketplace_manager"/>
+                    <button name="action_reject" string="Reject" type="object" class="btn-danger"
+                            invisible="state != 'pending'"
+                            groups="doctor_marketplace.group_doctor_marketplace_manager"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="doctor_id"/>
+                            <field name="patient_id"/>
+                            <field name="appointment_id"/>
+                            <field name="is_verified_booking"/>
+                        </group>
+                        <group>
+                            <field name="rating"/>
+                            <field name="would_recommend"/>
+                            <field name="helpful_count"/>
+                        </group>
+                    </group>
+                    <group string="Aspect Ratings">
+                        <group>
+                            <field name="punctuality_rating"/>
+                            <field name="communication_rating"/>
+                            <field name="treatment_rating"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="title"/>
+                        <field name="review"/>
+                    </group>
+                    <group string="Doctor Response" invisible="not doctor_response">
+                        <field name="doctor_response"/>
+                        <field name="doctor_response_date"/>
+                    </group>
+                    <group string="Rejection" invisible="state != 'rejected'">
+                        <field name="rejection_reason"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="doctor_review_action" model="ir.actions.act_window">
+        <field name="name">Reviews</field>
+        <field name="res_model">doctor.review</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Pending Reviews Action -->
+    <record id="doctor_review_action_pending" model="ir.actions.act_window">
+        <field name="name">Pending Reviews</field>
+        <field name="res_model">doctor.review</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'pending')]</field>
+    </record>
+
+</odoo>
