@@ -1,0 +1,196 @@
+/* =============================================================
+   MedConnect – Appointment Form UI
+   Scope: doctor.appointment form view only
+   Author: ADX Medicare
+   ============================================================= */
+
+/* ── Smart Buttons Strip ──────────────────────────────────── */
+.adx_appointment_form .o_form_statusbar {
+    border-bottom: 1px solid var(--color-info-soft, #dce9f9);
+}
+
+/* ── Section Title Separators ─────────────────────────────── */
+.adx_appointment_form .adx_section_title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-info, #017e84);
+    padding: 0 0 6px 0;
+    margin: 20px 0 4px 0;
+    border-bottom: 2px solid var(--color-info-soft, #dce9f9);
+    display: block;
+}
+
+/* ── Reference Title ──────────────────────────────────────── */
+.adx_appointment_form .oe_title h1 .o_field_widget input,
+.adx_appointment_form .oe_title h1 .o_field_char {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-dark, #1a1a2e);
+}
+
+/* ── Main Info Cards ──────────────────────────────────────── */
+.adx_appointment_form .adx_card {
+    background: var(--color-white, #ffffff);
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.adx_appointment_form .adx_card_header {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--color-info, #017e84);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color, #dee2e6);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.adx_appointment_form .adx_card_header i {
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+/* ── Group label alignment ────────────────────────────────── */
+.adx_appointment_form .o_group .o_wrap_field > label.o_form_label {
+    font-weight: 600;
+    color: var(--color-gray-dark, #495057);
+    font-size: 13px;
+    min-width: 160px;
+}
+
+.adx_appointment_form .o_group td.o_td_label {
+    width: 40%;
+}
+
+/* ── Reason / Symptoms Text Areas ─────────────────────────── */
+.adx_appointment_form .adx_text_section .o_field_text textarea {
+    min-height: 80px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color, #dee2e6);
+    resize: vertical;
+    font-size: 13px;
+    padding: 8px 10px;
+    background: var(--color-white, #fff);
+    transition: border-color 0.2s;
+}
+
+.adx_appointment_form .adx_text_section .o_field_text textarea:focus {
+    border-color: var(--color-info, #017e84);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(1, 126, 132, 0.12);
+}
+
+/* ── Payment Tab – Fee Summary Card ───────────────────────── */
+.adx_appointment_form .adx_fee_summary {
+    background: linear-gradient(135deg, #f0fafa 0%, #f8f9fa 100%);
+    border: 1px solid #c8e6e7;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+}
+
+.adx_appointment_form .adx_fee_row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 13.5px;
+    color: var(--color-dark, #343a40);
+    border-bottom: 1px dashed #d0e8e8;
+}
+
+.adx_appointment_form .adx_fee_row:last-child {
+    border-bottom: none;
+}
+
+.adx_appointment_form .adx_fee_row.adx_fee_total {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-info, #017e84);
+    border-top: 2px solid #c8e6e7;
+    margin-top: 6px;
+    padding-top: 10px;
+    border-bottom: none;
+}
+
+.adx_appointment_form .adx_fee_row.adx_fee_discount {
+    color: #e67e22;
+}
+
+/* ── Commission Summary ───────────────────────────────────── */
+.adx_appointment_form .adx_commission_card {
+    background: #f8f0ff;
+    border: 1px solid #e0c8f0;
+    border-radius: 8px;
+    padding: 14px 20px;
+}
+
+/* ── Consultation Notes Tab ───────────────────────────────── */
+.adx_appointment_form .adx_notes_section .o_field_html .odoo-editor-container {
+    min-height: 150px;
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
+.adx_appointment_form .adx_notes_section .o_field_text textarea {
+    min-height: 90px;
+    border-radius: 6px;
+    font-size: 13px;
+    padding: 8px 10px;
+    resize: vertical;
+}
+
+/* ── Notebook Tab Styling ─────────────────────────────────── */
+.adx_appointment_form .o_notebook .nav-link {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 16px;
+    color: var(--color-gray-dark, #495057);
+    border-radius: 6px 6px 0 0;
+    transition: color 0.15s, background 0.15s;
+}
+
+.adx_appointment_form .o_notebook .nav-link.active {
+    color: var(--color-info, #017e84);
+    border-bottom: 2px solid var(--color-info, #017e84);
+    background: transparent;
+}
+
+/* ── Cancellation Tab ─────────────────────────────────────── */
+.adx_appointment_form .adx_cancel_card {
+    background: #fff5f5;
+    border: 1px solid #fcc;
+    border-radius: 8px;
+    padding: 16px 20px;
+}
+
+/* ── Follow-up inline badge ───────────────────────────────── */
+.adx_appointment_form .adx_followup_box {
+    background: #fffde7;
+    border: 1px solid #ffe082;
+    border-radius: 6px;
+    padding: 10px 16px;
+    margin-top: 8px;
+}
+
+/* ── Responsive: collapse on narrow screens ───────────────── */
+@media (max-width: 992px) {
+    .adx_appointment_form .adx_card {
+        padding: 12px 14px;
+    }
+
+    .adx_appointment_form .o_group td.o_td_label {
+        width: 45%;
+    }
+}

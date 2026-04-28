@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================ -->
+        <!-- FORUM 1 — Main Community (Q&A mode)                         -->
+        <!-- ============================================================ -->
+        <record id="forum_medconnect" model="forum.forum">
+            <field name="name">MedConnect Community</field>
+            <field name="website_id" ref="website.default_website"/>
+            <field name="privacy">public</field>
+            <field name="description">
+                A trusted space for patients and doctors to share knowledge,
+                experiences, and medical insights.
+            </field>
+
+            <!-- Karma Gains -->
+            <field name="karma_gen_question_new">5</field>
+            <field name="karma_gen_question_upvote">10</field>
+            <field name="karma_gen_question_downvote">-2</field>
+            <field name="karma_gen_answer_upvote">10</field>
+            <field name="karma_gen_answer_downvote">-2</field>
+            <field name="karma_gen_answer_accept">2</field>
+            <field name="karma_gen_answer_accepted">15</field>
+            <field name="karma_gen_answer_flagged">-100</field>
+
+            <!-- Karma Rights -->
+            <field name="karma_ask">20</field>
+            <field name="karma_answer">5</field>
+            <field name="karma_edit_own">1</field>
+            <field name="karma_edit_all">300</field>
+            <field name="karma_edit_retag">75</field>
+            <field name="karma_close_own">100</field>
+            <field name="karma_close_all">500</field>
+            <field name="karma_unlink_own">500</field>
+            <field name="karma_unlink_all">1000</field>
+            <field name="karma_tag_create">150</field>
+            <field name="karma_upvote">50</field>
+            <field name="karma_downvote">100</field>
+            <field name="karma_answer_accept_own">20</field>
+            <field name="karma_answer_accept_all">500</field>
+            <field name="karma_comment_own">1</field>
+            <field name="karma_comment_all">1</field>
+            <field name="karma_comment_convert_own">50</field>
+            <field name="karma_comment_convert_all">500</field>
+            <field name="karma_comment_unlink_own">50</field>
+            <field name="karma_comment_unlink_all">500</field>
+            <field name="karma_flag">500</field>
+            <field name="karma_dofollow">500</field>
+            <field name="karma_editor">30</field>
+            <field name="karma_user_bio">750</field>
+            <field name="karma_post">100</field>
+            <field name="karma_moderate">1000</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- FORUM 2 — Articles & Announcements (Discussions mode)        -->
+        <!-- ============================================================ -->
+        <record id="forum_medconnect_articles" model="forum.forum">
+            <field name="name">MedConnect Articles &amp; Announcements</field>
+            <field name="website_id" ref="website.default_website"/>
+            <field name="privacy">public</field>
+            <field name="mode">discussions</field>
+            <field name="description">
+                Verified medical articles, FAQs, and official announcements
+                from the MedConnect team.
+            </field>
+
+            <!-- Karma Gains -->
+            <field name="karma_gen_question_new">5</field>
+            <field name="karma_gen_question_upvote">10</field>
+            <field name="karma_gen_question_downvote">-2</field>
+            <field name="karma_gen_answer_upvote">10</field>
+            <field name="karma_gen_answer_downvote">-2</field>
+            <field name="karma_gen_answer_accept">2</field>
+            <field name="karma_gen_answer_accepted">15</field>
+            <field name="karma_gen_answer_flagged">-100</field>
+
+            <!-- High bar — only verified users can post -->
+            <field name="karma_ask">200</field>
+            <field name="karma_answer">1</field>
+            <field name="karma_edit_own">1</field>
+            <field name="karma_edit_all">300</field>
+            <field name="karma_edit_retag">75</field>
+            <field name="karma_close_own">100</field>
+            <field name="karma_close_all">500</field>
+            <field name="karma_unlink_own">500</field>
+            <field name="karma_unlink_all">1000</field>
+            <field name="karma_tag_create">150</field>
+            <field name="karma_upvote">5</field>
+            <field name="karma_downvote">50</field>
+            <field name="karma_answer_accept_own">20</field>
+            <field name="karma_answer_accept_all">500</field>
+            <field name="karma_comment_own">1</field>
+            <field name="karma_comment_all">1</field>
+            <field name="karma_comment_convert_own">50</field>
+            <field name="karma_comment_convert_all">500</field>
+            <field name="karma_comment_unlink_own">50</field>
+            <field name="karma_comment_unlink_all">500</field>
+            <field name="karma_flag">500</field>
+            <field name="karma_dofollow">500</field>
+            <field name="karma_editor">30</field>
+            <field name="karma_user_bio">750</field>
+            <field name="karma_post">200</field>
+            <field name="karma_moderate">1000</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- TAGS — Forum 1: MedConnect Community                         -->
+        <!-- Categories replaced by color codes (Odoo 19 has no          -->
+        <!-- forum.tag.category — color groups them visually instead)     -->
+        <!-- color 1=red 2=orange 3=yellow 4=light-blue 5=purple         -->
+        <!-- 6=salmon 7=medium-blue 8=light-green 9=purple 10=green      -->
+        <!-- ============================================================ -->
+
+        <!-- Patient Q&A group (color 4) -->
+        <record id="forum_tag_symptoms" model="forum.tag">
+            <field name="name">Symptoms</field>
+            <field name="forum_id" ref="forum_medconnect"/>
+            <field name="color">4</field>
+        </record>
+        <record id="forum_tag_general_health" model="forum.tag">
+            <field name="name">General Health</field>
+            <field name="forum_id" ref="forum_medconnect"/>
+            <field name="color">4</field>
+        </record>
+        <record id="forum_tag_medication" model="forum.tag">
+            <field name="name">Medication</field>
+            <field name="forum_id" ref="forum_medconnect"/>
+            <field name="color">4</field>
+        </record>
+        <record id="forum_tag_diet_nutrition" model="forum.tag">
+            <field name="name">Diet &amp; Nutrition</field>
+            <field name="forum_id" ref="forum_medconnect"/>
+            <field name="color">4</field>
+        </record>
+        <record id="forum_tag_mental_health" model="forum.tag">
+            <field name="name">Mental Health</field>
+            <field name="forum_id" ref="forum_medconnect"/>
+            <field name="color">4</field>
+        </record>
+
+        <!-- Doctor Discussions group (color 5) -->
+        <record id="forum_tag_clinical_topics" model="forum.tag">
+            <field name="name">Clinical Topics</field>
+            <field name="forum_id" ref="forum_medconnect"/>
+            <field name="color">5</field>
+        </record>
+        <record id="forum_tag_case_discussions" model="forum.tag">
+            <field name="name">Case Discussions</field>
+            <field name="forum_id" ref="forum_medconnect"/>
+            <field name="color">5</field>
+        </record>
+        <record id="forum_tag_diagnosis" model="forum.tag">
+            <field name="name">Diagnosis</field>
+            <field name="forum_id" ref="forum_medconnect"/>
+            <field name="color">5</field>
+        </record>
+        <record id="forum_tag_research" model="forum.tag">
+            <field name="name">Research &amp; Studies</field>
+            <field name="forum_id" ref="forum_medconnect"/>
+            <field name="color">5</field>
+        </record>
+
+        <!-- Treatment Experiences group (color 10) -->
+        <record id="forum_tag_treatment_experiences" model="forum.tag">
+            <field name="name">Treatment Experiences</field>
+            <field name="forum_id" ref="forum_medconnect"/>
+            <field name="color">10</field>
+        </record>
+        <record id="forum_tag_surgery" model="forum.tag">
+            <field name="name">Surgery</field>
+            <field name="forum_id" ref="forum_medconnect"/>
+            <field name="color">10</field>
+        </record>
+        <record id="forum_tag_rehabilitation" model="forum.tag">
+            <field name="name">Rehabilitation</field>
+            <field name="forum_id" ref="forum_medconnect"/>
+            <field name="color">10</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- TAGS — Forum 2: Articles & Announcements                     -->
+        <!-- ============================================================ -->
+        <record id="forum_tag_verified_articles" model="forum.tag">
+            <field name="name">Verified Articles</field>
+            <field name="forum_id" ref="forum_medconnect_articles"/>
+            <field name="color">3</field>
+        </record>
+        <record id="forum_tag_faq" model="forum.tag">
+            <field name="name">FAQ</field>
+            <field name="forum_id" ref="forum_medconnect_articles"/>
+            <field name="color">3</field>
+        </record>
+        <record id="forum_tag_announcements" model="forum.tag">
+            <field name="name">Announcements</field>
+            <field name="forum_id" ref="forum_medconnect_articles"/>
+            <field name="color">1</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- WELCOME POST                                                  -->
+        <!-- ============================================================ -->
+        <record id="forum_post_welcome" model="forum.post">
+            <field name="name">Welcome to MedConnect Community — Please Read Before Posting</field>
+            <field name="forum_id" ref="forum_medconnect"/>
+            <field name="tag_ids" eval="[(4, ref('forum_tag_general_health'))]"/>
+            <field name="content">
+                &lt;h3&gt;Welcome to MedConnect Community!&lt;/h3&gt;
+                &lt;p&gt;This is a trusted space for patients and doctors to share knowledge and experiences.&lt;/p&gt;
+                &lt;h4&gt;Community Guidelines&lt;/h4&gt;
+                &lt;ul&gt;
+                &lt;li&gt;Be respectful and professional at all times.&lt;/li&gt;
+                &lt;li&gt;Do not share personal medical records or private patient data.&lt;/li&gt;
+                &lt;li&gt;Tag your posts correctly so the right people can find them.&lt;/li&gt;
+                &lt;li&gt;Verified doctors should use Clinical Topics or Case Discussions tags.&lt;/li&gt;
+                &lt;li&gt;All medical advice shared here is informational only.&lt;/li&gt;
+                &lt;/ul&gt;
+                &lt;p&gt;Thank you for being part of the community.&lt;/p&gt;
+            </field>
+        </record>
+
+    </data>
+</odoo>

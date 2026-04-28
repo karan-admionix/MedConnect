@@ -185,28 +185,36 @@
                                 </div>
 
                                 <!-- Reason / Symptoms -->
+                                <!--
+                                    FIX 1: <t t-out> is on the same line as <textarea> open/close tags.
+                                    HTML textarea renders ALL whitespace literally — indented content
+                                    caused a leading newline + spaces to appear in the empty field.
+                                -->
                                 <div class="mc-form-group">
                                     <label class="mc-label" for="reason">Reason for Visit</label>
                                     <textarea name="reason" id="reason" class="mc-textarea" rows="2"
-                                              placeholder="Briefly describe the reason for this visit...">
-                                        <t t-out="form_data.get('reason', '')"/>
-                                    </textarea>
+                                              placeholder="Briefly describe the reason for this visit..."><t t-out="form_data.get('reason', '')"/></textarea>
                                 </div>
 
                                 <div class="mc-form-group">
                                     <label class="mc-label" for="symptoms">Symptoms (if any)</label>
                                     <textarea name="symptoms" id="symptoms" class="mc-textarea" rows="2"
-                                              placeholder="List your symptoms...">
-                                        <t t-out="form_data.get('symptoms', '')"/>
-                                    </textarea>
+                                              placeholder="List your symptoms..."><t t-out="form_data.get('symptoms', '')"/></textarea>
                                 </div>
 
                                 <!-- Guest: show login/signup prompt instead of form fields -->
                                 <t t-if="request.env.user._is_public()">
-                                    <div class="mc-guest-section" style="text-align:center; padding: 24px 16px;">
+                                    <!--
+                                        FIX 2: Reduced vertical padding from 24px to 12px to remove
+                                        the excessive gap between the symptom field and this box.
+                                        text-align and horizontal padding are unchanged.
+                                    -->
+                                    <div class="mc-guest-section" style="text-align:center; padding: 12px 16px;">
                                         <i class="fa fa-lock fa-2x" style="color:#6c757d; margin-bottom:12px;"/>
                                         <h4 class="mc-section-title">Login Required</h4>
-                                        <p class="mc-section-hint">Please log in or create an account to confirm your booking.</p>
+                                        <p class="mc-section-hint">Please log in or create an account to confirm your
+                                            booking.
+                                        </p>
                                     </div>
                                 </t>
 
@@ -215,7 +223,8 @@
                                     <t t-if="request.env.user._is_public()">
                                         <a t-attf-href="/web/login?redirect=/book-appointment/#{doctor.id}"
                                            class="mc-btn mc-btn-primary mc-btn-lg">
-                                            <i class="fa fa-sign-in"/> Log in to Book
+                                            <i class="fa fa-sign-in"/>
+                                            Log in to Book
                                         </a>
                                     </t>
                                     <t t-else="">
@@ -225,15 +234,14 @@
                                         </button>
                                     </t>
                                 </div>
-                                <t t-if="request.env.user._is_public()">
+
+                                <!-- Guest-only: signup/register link — hidden once logged in -->
+                                <t t-if="request.env.user._is_public() and signup_enabled">
                                     <p style="text-align:center; margin-top:10px; font-size:13px; color:#666;">
                                         New patient?
-                                        <t t-if="signup_enabled">
-                                            <a t-attf-href="/web/signup?redirect=/book-appointment/#{doctor.id}">Create a free account</a>
-                                        </t>
-                                        <t t-else="">
-                                            <a t-attf-href="/web/login?redirect=/book-appointment/#{doctor.id}">Register here</a>
-                                        </t>
+                                        <a t-attf-href="/web/signup?redirect=/book-appointment/#{doctor.id}">
+                                            Create a free account
+                                        </a>
                                     </p>
                                 </t>
 
@@ -429,6 +437,7 @@
                                     <th>Mode</th>
                                     <th>Fee (₹)</th>
                                     <th>Status</th>
+                                    <th>Review</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -466,6 +475,17 @@
                                                 <t t-out="dict(appt._fields['state'].selection).get(appt.state, appt.state)"/>
                                             </span>
                                         </td>
+                                        <td>
+                                            <t t-if="appt.state == 'completed' and appt.id not in reviewed_appointment_ids">
+                                                <a t-attf-href="/my/appointments/#{appt.id}/review"
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    Write a Review
+                                                </a>
+                                            </t>
+                                            <t t-elif="appt.id in reviewed_appointment_ids">
+                                                <span class="badge bg-success">Reviewed</span>
+                                            </t>
+                                        </td>
                                     </tr>
                                 </t>
                             </tbody>
@@ -480,11 +500,22 @@
     <!-- ============================================================ -->
     <!-- 4. PORTAL MENU ENTRY — Inject into /my/home                 -->
     <!-- ============================================================ -->
-    <template id="portal_my_home_appointments" name="My Appointments"
-              inherit_id="portal.portal_my_home" priority="30">
+    <!-- 1. Suppress Odoo's native appointment portal entry -->
+    <template id="portal_my_home_appointments_suppress"
+              name="Suppress Native Appointment Portal Entry"
+              inherit_id="appointment.portal_my_home_appointment"
+              priority="99">
+        <xpath expr="//t[@t-call='portal.portal_docs_entry']" position="replace"/>
+    </template>
+
+    <!-- 2. Inject custom MedConnect appointments entry -->
+    <template id="portal_my_home_appointments"
+              name="My Appointments"
+              inherit_id="portal.portal_my_home"
+              priority="30">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
             <t t-call="portal.portal_docs_entry">
-                <t t-set="icon">/web/static/img/smile.svg</t>
+                <t t-set="icon">/doctor_marketplace/static/src/img/appointment.svg</t>
                 <t t-set="title">Appointments</t>
                 <t t-set="url">/my/appointments</t>
                 <t t-set="placeholder_count" t-value="'appointment_count'"/>
@@ -493,15 +524,17 @@
         </xpath>
     </template>
 
-
-    <!-- ============================================================ -->\n    <!-- 5. PORTAL HOME ENTRY — Doctor Appointments                  -->\n    <!--    Injects into /my/home; only visible when count > 0        -->\n    <!-- ============================================================ -->
+    <!-- ============================================================ -->
+    <!-- 5. PORTAL HOME ENTRY — Doctor Appointments                  -->
+    <!--    Injects into /my/home; only visible when count > 0        -->
+    <!-- ============================================================ -->
     <template id="portal_my_home_doctor_appointments"
               name="Doctor - My Patient Appointments"
               inherit_id="portal.portal_my_home"
               priority="35">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
             <t t-call="portal.portal_docs_entry">
-                <t t-set="icon" t-value="'/web/static/img/smile.svg'"/>
+                <t t-set="icon" t-value="'/doctor_marketplace/static/src/img/appointment.svg'"/>
                 <t t-set="title">My Patient Appointments</t>
                 <t t-set="url" t-value="'/my/doctor-appointments'"/>
                 <t t-set="placeholder_count" t-value="'doctor_appointment_count'"/>
@@ -510,7 +543,10 @@
         </xpath>
     </template>
 
-    <!-- ============================================================ -->\n    <!-- 6. DOCTOR PORTAL — My Patient Appointments List            -->\n    <!--    URL: /my/doctor-appointments                             -->\n    <!-- ============================================================ -->
+    <!-- ============================================================ -->
+    <!-- 6. DOCTOR PORTAL — My Patient Appointments List             -->
+    <!--    URL: /my/doctor-appointments                              -->
+    <!-- ============================================================ -->
     <template id="portal_doctor_appointments" name="Doctor - My Patient Appointments">
         <t t-call="website.layout">
             <div id="wrap" class="medconnect-page">
@@ -519,14 +555,16 @@
                     <!-- Breadcrumb -->
                     <nav aria-label="breadcrumb" style="margin-bottom: 20px;">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="/my/home">My Account</a></li>
+                            <li class="breadcrumb-item">
+                                <a href="/my/home">My Account</a>
+                            </li>
                             <li class="breadcrumb-item active">My Patient Appointments</li>
                         </ol>
                     </nav>
 
                     <h1 style="margin-bottom: 6px;">My Patient Appointments</h1>
                     <p style="color: #666; margin-bottom: 30px;">
-                        All appointments booked with Dr. <t t-out="doctor.name"/>.
+                        All appointments booked with Dr.<t t-out="doctor.name"/>.
                     </p>
 
                     <!-- Empty state -->
@@ -541,7 +579,8 @@
                     <!-- Appointments table -->
                     <t t-if="appointments">
                         <div class="table-responsive">
-                            <table class="table table-hover" style="background:#fff; border-radius:8px; overflow:hidden;">
+                            <table class="table table-hover"
+                                   style="background:#fff; border-radius:8px; overflow:hidden;">
                                 <thead style="background:#f8f9fa;">
                                     <tr>
                                         <th>Reference</th>
@@ -558,17 +597,27 @@
                                 <tbody>
                                     <t t-foreach="appointments" t-as="appt">
                                         <tr>
-                                            <td><t t-out="appt.name"/></td>
-                                            <td><t t-out="appt.patient_id.name"/></td>
-                                            <td><t t-out="appt.appointment_date"/></td>
-                                            <td><t t-out="appt.appointment_time_display"/></td>
+                                            <td>
+                                                <t t-out="appt.name"/>
+                                            </td>
+                                            <td>
+                                                <t t-out="appt.patient_id.name"/>
+                                            </td>
+                                            <td>
+                                                <t t-out="appt.appointment_date"/>
+                                            </td>
+                                            <td>
+                                                <t t-out="appt.appointment_time_display"/>
+                                            </td>
                                             <td>
                                                 <t t-out="dict(appt._fields['consultation_type'].selection).get(appt.consultation_type, '')"/>
                                             </td>
                                             <td>
                                                 <t t-out="dict(appt._fields['consultation_mode'].selection).get(appt.consultation_mode, '')"/>
                                             </td>
-                                            <td><t t-out="'%.0f' % appt.final_amount"/></td>
+                                            <td>
+                                                <t t-out="'%.0f' % appt.final_amount"/>
+                                            </td>
                                             <td>
                                                 <span t-attf-class="badge #{
                                                     'bg-success' if appt.payment_status == 'paid' else

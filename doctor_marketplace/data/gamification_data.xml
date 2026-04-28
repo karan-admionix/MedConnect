@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================ -->
+        <!-- DOCTOR VERIFICATION BADGE                                    -->
+        <!-- ============================================================ -->
+        <record id="badge_verified_doctor" model="gamification.badge">
+            <field name="name">Verified Doctor</field>
+            <field name="description">
+                Awarded to doctors who have completed identity verification,
+                submitted valid medical registration, and been approved
+                by the MedConnect team.
+            </field>
+            <field name="rule_auth">nobody</field>
+        </record>
+
+        <record id="badge_senior_doctor" model="gamification.badge">
+            <field name="name">Senior Practitioner</field>
+            <field name="description">
+                Awarded to verified doctors with 10 or more years
+                of clinical experience on the MedConnect platform.
+            </field>
+            <field name="rule_auth">nobody</field>
+        </record>
+
+        <record id="badge_top_rated_doctor" model="gamification.badge">
+            <field name="name">Top Rated Doctor</field>
+            <field name="description">
+                Awarded to doctors who maintain a patient rating
+                of 4.5 or above across 50 or more reviews.
+            </field>
+            <field name="rule_auth">nobody</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- PATIENT ENGAGEMENT BADGES                                    -->
+        <!-- ============================================================ -->
+        <record id="badge_health_advocate" model="gamification.badge">
+            <field name="name">Health Advocate</field>
+            <field name="description">
+                Awarded to patients who actively contribute to the
+                MedConnect community through forum posts and reviews.
+            </field>
+            <field name="rule_auth">nobody</field>
+        </record>
+
+        <record id="badge_forum_contributor" model="gamification.badge">
+            <field name="name">Community Contributor</field>
+            <field name="description">
+                Awarded to forum members whose answers have been
+                upvoted 10 or more times by the community.
+            </field>
+            <field name="rule_auth">nobody</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- KARMA RANKS (gamification.karma.rank — Odoo 19)             -->
+        <!-- ============================================================ -->
+        <record id="karma_rank_new_member" model="gamification.karma.rank">
+            <field name="name">New Member</field>
+            <field name="karma_min">1</field>
+            <field name="description">Welcome to MedConnect Community!</field>
+            <field name="description_motivational">
+                Start by asking a question or sharing your experience.
+            </field>
+        </record>
+
+        <record id="karma_rank_active_member" model="gamification.karma.rank">
+            <field name="name">Active Member</field>
+            <field name="karma_min">100</field>
+            <field name="description">A trusted and active community member.</field>
+            <field name="description_motivational">
+                Keep contributing to unlock moderator privileges.
+            </field>
+        </record>
+
+        <record id="karma_rank_trusted_member" model="gamification.karma.rank">
+            <field name="name">Trusted Member</field>
+            <field name="karma_min">500</field>
+            <field name="description">A highly trusted community contributor.</field>
+            <field name="description_motivational">
+                You are close to becoming a community moderator.
+            </field>
+        </record>
+
+        <record id="karma_rank_moderator" model="gamification.karma.rank">
+            <field name="name">Community Moderator</field>
+            <field name="karma_min">1000</field>
+            <field name="description">A community moderator with full moderation rights.</field>
+            <field name="description_motivational">
+                Thank you for keeping our community safe and helpful.
+            </field>
+        </record>
+
+    </data>
+</odoo>

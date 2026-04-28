@@ -55,8 +55,19 @@ PHASE 4 - SCALE:
         'mail',
         'portal',
         'website',
+        'website_forum',
+        'website_blog',
+        'website_profile',
+        'gamification',
+        'digest',
         'payment',
         'auth_signup',
+        'sale_management',
+        'stock',
+        'accountant',
+        'contacts',
+        'purchase',
+        'product',
     ],
 
     'data': [
@@ -69,13 +80,18 @@ PHASE 4 - SCALE:
         'data/doctor_specialization_data.xml',
         'data/subscription_plan_data.xml',
         'data/doctor_badge_data.xml',
+        'data/forum_data.xml',
+        'data/blog_data.xml',
+        'data/gamification_data.xml',
+        'data/digest_data.xml',
+        'data/calendar_data.xml',
+        'data/faq_data.xml',
 
         # Views - Configuration
         'views/doctor_specialization_views.xml',
         'views/doctor_consultation_type_views.xml',
         'views/subscription_plan_views.xml',
         'views/doctor_badge_views.xml',
-        'views/country_compliance_views.xml',
 
         # Views - Main
         'views/doctor_doctor_views.xml',
@@ -109,8 +125,11 @@ PHASE 4 - SCALE:
         'views/website_doctor_templates.xml',
         'views/website_appointment_templates.xml',
 
-        # Menus
+        # Menus (must be loaded before any view that references a menu parent)
         'views/doctor_menus.xml',
+
+        # Views requiring menus to be defined first
+        'views/country_compliance_views.xml',
     ],
 
     'assets': {
@@ -119,6 +138,7 @@ PHASE 4 - SCALE:
         ],
         'web.assets_frontend': [
             'doctor_marketplace/static/src/css/website_doctor.css',
+            'doctor_marketplace/static/src/css/registration_form.css',
             'doctor_marketplace/static/src/xml/compliance_popup.xml',
             'doctor_marketplace/static/src/js/compliance_popup.js',
             'doctor_marketplace/static/src/js/compliance_registration.js',

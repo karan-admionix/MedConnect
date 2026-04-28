@@ -496,7 +496,7 @@
     <!-- ============================================================ -->
     <template id="website_doctor_registration" name="MedConnect - Doctor Registration">
         <t t-call="website.layout">
-            <div id="wrap" class="medconnect-page">
+            <div id="wrap" class="medconnect-page mc-reg-page">
                 <div class="container mc-form-container">
 
                     <div class="mc-form-card">
@@ -508,6 +508,29 @@
                             <p class="mc-form-subtitle">
                                 Join MedConnect. Fill in your details and our team will verify your profile.
                             </p>
+                        </div>
+
+                        <!-- Progress Steps Strip -->
+                        <div class="mc-reg-steps">
+                            <div class="mc-reg-step mc-step-active">
+                                <span class="mc-reg-step-num">1</span>
+                                Personal
+                            </div>
+                            <div class="mc-reg-step-sep"/>
+                            <div class="mc-reg-step mc-step-active">
+                                <span class="mc-reg-step-num">2</span>
+                                Professional
+                            </div>
+                            <div class="mc-reg-step-sep"/>
+                            <div class="mc-reg-step mc-step-active">
+                                <span class="mc-reg-step-num">3</span>
+                                Clinic
+                            </div>
+                            <div class="mc-reg-step-sep"/>
+                            <div class="mc-reg-step mc-step-active">
+                                <span class="mc-reg-step-num">4</span>
+                                Compliance
+                            </div>
                         </div>
 
                         <!-- General Error -->
@@ -770,9 +793,7 @@
                             <div class="mc-form-group mc-form-group-full">
                                 <label class="mc-label" for="bio">About Yourself</label>
                                 <textarea name="bio" id="bio" class="mc-textarea" rows="4"
-                                          placeholder="Brief description of your expertise, approach, areas of focus...">
-                                    <t t-out="form_data.get('bio', '')"/>
-                                </textarea>
+                                          placeholder="Brief description of your expertise, approach, areas of focus..."><t t-out="form_data.get('bio', '')"/></textarea>
                             </div>
 
                             <!-- SECTION: Country & Compliance -->
@@ -807,13 +828,16 @@
                                      style="max-height:300px; overflow-y:auto;">
                                 </div>
                                 <!-- Checkbox: doctor must tick before submitting -->
-                                <div class="mc-form-group">
-                                    <label class="mc-label">
+                                <div class="mc-form-group mc-compliance-check-wrap">
+                                    <label class="mc-label mc-compliance-label">
                                         <input type="checkbox" name="compliance_accepted"
                                                id="compliance_accepted" value="1"/>
                                         &#160;I have read and accept the compliance requirements
                                         <span class="mc-required">*</span>
                                     </label>
+                                    <span id="compliance_error" class="mc-error-msg mc-compliance-error" style="display:none;">
+                                        <i class="fa fa-exclamation-circle"/> You must accept the compliance requirements to proceed.
+                                    </span>
                                 </div>
                             </div>
 

@@ -480,9 +480,18 @@ class WebsiteDoctorController(http.Controller):
             order='appointment_date desc, appointment_time desc'
         )
 
+        # Build a set of appointment IDs that already have a review,
+        # to avoid relying on computed field in sudo/portal context.
+        reviewed_appointment_ids = set(
+            request.env['doctor.review'].sudo().search([
+                ('appointment_id', 'in', appointments.ids),
+            ]).mapped('appointment_id').ids
+        )
+
         values = {
             'appointments': appointments,
             'patient': patient,
+            'reviewed_appointment_ids': reviewed_appointment_ids,
         }
         return request.render('doctor_marketplace.portal_my_appointments', values)
 
@@ -514,3 +523,90 @@ class WebsiteDoctorController(http.Controller):
             'page_name': 'doctor_appointments',
         }
         return request.render('doctor_marketplace.portal_doctor_appointments', values)
+
+    # =========================================================
+    # PATIENT PORTAL — Submit Review for completed appointment
+    # /my/appointments/<int:appointment_id>/review  (GET + POST)
+    # =========================================================
+
+    @http.route(
+        '/my/appointments/<int:appointment_id>/review',
+        type='http', auth='user', website=True, methods=['GET', 'POST']
+    )
+    def portal_submit_review(self, appointment_id, **kwargs):
+        """
+        GET  — render the review submission form.
+        POST — validate and save the review.
+        Only allowed for completed appointments without an existing review,
+        belonging to the logged-in patient.
+        """
+        # Find the patient record for the logged-in user
+        patient = request.env['doctor.patient'].sudo().search([
+            ('user_id', '=', request.env.user.id)
+        ], limit=1)
+
+        if not patient:
+            return request.redirect('/my/appointments')
+
+        # Find the appointment — must belong to this patient and be completed
+        appointment = request.env['doctor.appointment'].sudo().search([
+            ('id', '=', appointment_id),
+            ('patient_id', '=', patient.id),
+            ('state', '=', 'completed'),
+        ], limit=1)
+
+        if not appointment:
+            return request.redirect('/my/appointments')
+
+        # Already reviewed — redirect back
+        if appointment.has_review:
+            return request.redirect('/my/appointments')
+
+        error = {}
+        form_data = {}
+
+        if request.httprequest.method == 'POST':
+            form_data = kwargs
+
+            # Validate rating
+            try:
+                rating = float(kwargs.get('rating', 0))
+                if rating < 1 or rating > 5:
+                    error['rating'] = _('Please select a rating between 1 and 5.')
+            except (ValueError, TypeError):
+                error['rating'] = _('Invalid rating value.')
+
+            # Validate review text
+            if not kwargs.get('review', '').strip():
+                error['review'] = _('Please write your review.')
+
+            if not error:
+                try:
+                    review_vals = {
+                        'doctor_id': appointment.doctor_id.id,
+                        'patient_id': patient.id,
+                        'appointment_id': appointment.id,
+                        'rating': rating,
+                        'title': kwargs.get('title', '').strip(),
+                        'review': kwargs.get('review', '').strip(),
+                        'would_recommend': bool(kwargs.get('would_recommend')),
+                        'punctuality_rating': float(kwargs.get('punctuality_rating') or 0),
+                        'communication_rating': float(kwargs.get('communication_rating') or 0),
+                        'treatment_rating': float(kwargs.get('treatment_rating') or 0),
+                    }
+                    request.env['doctor.review'].sudo().create(review_vals)
+                    return request.render(
+                        'doctor_marketplace.portal_review_success', {
+                            'doctor': appointment.doctor_id,
+                        }
+                    )
+                except Exception as e:
+                    _logger.exception("Review submission failed: %s", str(e))
+                    error['general'] = _('Submission failed. Please try again.')
+
+        return request.render('doctor_marketplace.portal_review_form', {
+            'appointment': appointment,
+            'doctor': appointment.doctor_id,
+            'error': error,
+            'form_data': form_data,
+        })

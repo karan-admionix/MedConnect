@@ -27,7 +27,10 @@
         <field name="name">doctor.appointment.form</field>
         <field name="model">doctor.appointment</field>
         <field name="arch" type="xml">
-            <form string="Appointment">
+            <form string="Appointment" class="adx_appointment_form">
+                <!-- ═══════════════════════════════════════════
+                     HEADER – Action Buttons + Status Bar
+                ════════════════════════════════════════════ -->
                 <header>
                     <button name="action_confirm" string="Confirm" type="object" class="btn-primary"
                             invisible="state != 'draft'"/>
@@ -40,91 +43,231 @@
                     <button name="action_no_show" string="No Show" type="object" class="btn-warning"
                             invisible="state != 'confirmed'"
                             groups="doctor_marketplace.group_doctor_marketplace_manager"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,in_progress,completed"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed,in_progress,completed"/>
                 </header>
+
+                <!-- ═══════════════════════════════════════════
+                     SHEET
+                ════════════════════════════════════════════ -->
                 <sheet>
-                    <div class="oe_title">
-                        <label for="name"/>
-                        <h1>
+
+                    <!-- ── Reference Number ── -->
+                    <div class="oe_title mb-3">
+                        <label for="name" class="text-muted"
+                               style="font-size:12px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase;"/>
+                        <h1 class="mt-0">
                             <field name="name"/>
                         </h1>
                     </div>
-                    <group>
-                        <group string="Appointment Details">
-                            <field name="doctor_id"/>
-                            <field name="specialization_id"/>
-                            <field name="patient_id"/>
-                            <field name="family_member_id" domain="[('patient_id', '=', patient_id)]"/>
-                        </group>
-                        <group string="Schedule">
-                            <field name="appointment_date"/>
-                            <field name="appointment_time" widget="float_time"/>
-                            <field name="duration"/>
-                            <field name="consultation_type"/>
-                            <field name="consultation_mode"/>
-                        </group>
-                    </group>
-                    <group>
-                        <group string="Reason">
-                            <field name="reason" nolabel="1" placeholder="Reason for consultation..."/>
-                        </group>
-                        <group string="Symptoms">
-                            <field name="symptoms" nolabel="1" placeholder="Describe symptoms..."/>
-                        </group>
-                    </group>
+
+                    <!-- ══════════════════════════════════════
+                         SECTION 1 – Core Appointment Info
+                    ═══════════════════════════════════════ -->
+                    <div class="adx_card mb-3">
+                        <div class="adx_card_header">
+                            <i class="fa fa-user-md"/>
+                            Appointment Details
+                        </div>
+                        <div class="row">
+                            <!-- Left Column: Parties -->
+                            <div class="col-lg-6">
+                                <group col="2" string="">
+                                    <field name="doctor_id" options="{'no_open': False}"/>
+                                    <field name="specialization_id"/>
+                                    <field name="patient_id" options="{'no_open': False}"/>
+                                    <field name="family_member_id"
+                                           domain="[('patient_id', '=', patient_id)]"/>
+                                </group>
+                            </div>
+                            <!-- Right Column: Schedule -->
+                            <div class="col-lg-6">
+                                <group col="2" string="">
+                                    <field name="appointment_date"/>
+                                    <field name="appointment_time" widget="float_time"/>
+                                    <field name="duration"/>
+                                    <field name="consultation_type"/>
+                                    <field name="consultation_mode"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ══════════════════════════════════════
+                         SECTION 2 – Reason & Symptoms
+                    ═══════════════════════════════════════ -->
+                    <div class="adx_card adx_text_section mb-3">
+                        <div class="adx_card_header">
+                            <i class="fa fa-stethoscope"/>
+                            Clinical Information
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <label for="reason" class="o_form_label fw-bold mb-1" style="font-size:13px;"/>
+                                <field name="reason" nolabel="1"
+                                       placeholder="Reason for consultation..."
+                                       style="width:100%;"/>
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="symptoms" class="o_form_label fw-bold mb-1" style="font-size:13px;"/>
+                                <field name="symptoms" nolabel="1"
+                                       placeholder="Describe symptoms..."
+                                       style="width:100%;"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ══════════════════════════════════════
+                         NOTEBOOK – Payment / Notes / Cancel
+                    ═══════════════════════════════════════ -->
                     <notebook>
+
+                        <!-- ─── Tab: Payment ─────────────────────── -->
                         <page string="Payment" name="payment">
-                            <group>
-                                <group>
-                                    <field name="consultation_fee"/>
-                                    <field name="discount_amount"/>
-                                    <field name="subscription_discount"/>
-                                    <field name="final_amount"/>
-                                </group>
-                                <group>
-                                    <field name="payment_status"/>
-                                    <field name="payment_method"/>
-                                    <field name="payment_reference"/>
-                                    <field name="payment_date"/>
-                                </group>
-                            </group>
-                            <group>
-                                <group>
+
+                            <div class="row">
+
+                                <!-- Fee Summary Card -->
+                                <div class="col-lg-6">
+                                    <div class="adx_card_header mb-2">
+                                        <i class="fa fa-money"/>
+                                        Fee Breakdown
+                                    </div>
+                                    <div class="adx_fee_summary">
+                                        <div class="adx_fee_row">
+                                            <span>Consultation Fee</span>
+                                            <field name="consultation_fee" nolabel="1"/>
+                                        </div>
+                                        <div class="adx_fee_row adx_fee_discount">
+                                            <span>Discount</span>
+                                            <field name="discount_amount" nolabel="1"/>
+                                        </div>
+                                        <div class="adx_fee_row adx_fee_discount">
+                                            <span>Subscription Discount</span>
+                                            <field name="subscription_discount" nolabel="1"/>
+                                        </div>
+                                        <div class="adx_fee_row adx_fee_total">
+                                            <span>Final Amount</span>
+                                            <field name="final_amount" nolabel="1"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Payment Info -->
+                                <div class="col-lg-6">
+                                    <div class="adx_card_header mb-2">
+                                        <i class="fa fa-credit-card"/>
+                                        Payment Info
+                                    </div>
+                                    <div class="adx_card">
+                                        <group col="2">
+                                            <field name="payment_status" widget="badge"/>
+                                            <field name="payment_method"/>
+                                            <field name="payment_reference"/>
+                                            <field name="payment_date"/>
+                                        </group>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Commission Summary -->
+                            <div class="adx_commission_card mt-3">
+                                <div class="adx_card_header mb-2" style="color:#7b3fa0; border-color:#c8a0dc;">
+                                    <i class="fa fa-pie-chart"/>
+                                    Platform Commission
+                                </div>
+                                <group col="2">
                                     <field name="platform_commission_percent"/>
                                     <field name="platform_commission"/>
                                     <field name="doctor_payout"/>
                                 </group>
-                            </group>
+                            </div>
+
                         </page>
+
+                        <!-- ─── Tab: Consultation Notes ──────────── -->
                         <page string="Consultation Notes" name="notes"
                               invisible="state not in ('in_progress', 'completed')">
-                            <group>
-                                <field name="diagnosis" placeholder="Diagnosis..."/>
-                            </group>
-                            <field name="prescription" placeholder="Write prescription..."/>
-                            <group>
-                                <group>
-                                    <field name="follow_up_required"/>
-                                    <field name="follow_up_date" invisible="not follow_up_required"/>
-                                </group>
-                            </group>
-                            <group>
-                                <field name="doctor_notes" placeholder="Additional notes..."/>
-                            </group>
+                            <div class="adx_notes_section">
+
+                                <!-- Diagnosis -->
+                                <div class="adx_card mb-3">
+                                    <div class="adx_card_header">
+                                        <i class="fa fa-file-medical-alt"/>
+                                        Diagnosis
+                                    </div>
+                                    <group col="1">
+                                        <field name="diagnosis" nolabel="1"
+                                               placeholder="Enter diagnosis here..."/>
+                                    </group>
+                                </div>
+
+                                <!-- Prescription -->
+                                <div class="adx_card mb-3">
+                                    <div class="adx_card_header">
+                                        <i class="fa fa-prescription-bottle-alt"/>
+                                        Prescription
+                                    </div>
+                                    <field name="prescription" nolabel="1"
+                                           placeholder="Write prescription..."/>
+                                </div>
+
+                                <!-- Follow-up -->
+                                <div class="adx_followup_box mb-3">
+                                    <group col="2">
+                                        <field name="follow_up_required"/>
+                                        <field name="follow_up_date"
+                                               invisible="not follow_up_required"/>
+                                    </group>
+                                </div>
+
+                                <!-- Doctor Notes -->
+                                <div class="adx_card">
+                                    <div class="adx_card_header">
+                                        <i class="fa fa-sticky-note"/>
+                                        Doctor Notes
+                                    </div>
+                                    <group col="1">
+                                        <field name="doctor_notes" nolabel="1"
+                                               placeholder="Additional notes..."/>
+                                    </group>
+                                </div>
+
+                            </div>
                         </page>
+
+                        <!-- ─── Tab: Cancellation ────────────────── -->
                         <page string="Cancellation" name="cancellation"
                               invisible="state not in ('cancelled', 'no_show')">
-                            <group>
-                                <group>
-                                    <field name="cancelled_by"/>
-                                    <field name="cancellation_reason"/>
-                                </group>
-                                <group>
-                                    <field name="refund_amount"/>
-                                    <field name="refund_reason"/>
-                                </group>
-                            </group>
+                            <div class="adx_cancel_card">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="adx_card_header mb-2"
+                                             style="color:#c0392b; border-color:#f5b7b1;">
+                                            <i class="fa fa-times-circle"/>
+                                            Cancellation Info
+                                        </div>
+                                        <group col="2">
+                                            <field name="cancelled_by"/>
+                                            <field name="cancellation_reason"/>
+                                        </group>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="adx_card_header mb-2"
+                                             style="color:#c0392b; border-color:#f5b7b1;">
+                                            <i class="fa fa-undo"/>
+                                            Refund Details
+                                        </div>
+                                        <group col="2">
+                                            <field name="refund_amount"/>
+                                            <field name="refund_reason"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
                         </page>
+
                     </notebook>
                 </sheet>
                 <chatter/>

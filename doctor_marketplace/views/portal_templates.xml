@@ -7,4 +7,223 @@
 
         It is NOT defined here to avoid duplicate XML ID conflicts on install.
     -->
+
+    <!-- ============================================================ -->
+    <!-- REVIEW SUBMISSION FORM                                       -->
+    <!-- URL: /my/appointments/<id>/review                            -->
+    <!-- ============================================================ -->
+    <template id="portal_review_form" name="MedConnect - Submit Review">
+        <t t-call="website.layout">
+            <div id="wrap" class="medconnect-page">
+                <div class="container" style="max-width: 680px; padding: 40px 15px;">
+
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb" style="margin-bottom: 20px;">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="/my/home">My Account</a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="/my/appointments">Appointments</a>
+                            </li>
+                            <li class="breadcrumb-item active">Write a Review</li>
+                        </ol>
+                    </nav>
+
+                    <h2 style="margin-bottom: 6px;">Write a Review</h2>
+                    <p style="color: #666; margin-bottom: 24px;">
+                        Share your experience with Dr.
+                        <strong>
+                            <t t-out="doctor.name"/>
+                        </strong>
+                    </p>
+
+                    <!-- General Error -->
+                    <t t-if="error.get('general')">
+                        <div class="alert alert-danger">
+                            <t t-out="error.get('general')"/>
+                        </div>
+                    </t>
+
+                    <form t-attf-action="/my/appointments/#{appointment.id}/review"
+                          method="POST" class="mc-form">
+                        <input type="hidden" name="csrf_token"
+                               t-att-value="request.csrf_token()"/>
+
+                        <!-- Overall Rating -->
+                        <div class="mc-form-group"
+                             t-att-class="'mc-has-error' if error.get('rating') else ''">
+                            <label class="mc-label">
+                                Overall Rating
+                                <span class="mc-required">*</span>
+                            </label>
+                            <select name="rating" class="mc-input">
+                                <option value="">— Select rating —</option>
+                                <option value="5"
+                                        t-att-selected="form_data.get('rating') == '5'">
+                                    ★★★★★ Excellent (5)
+                                </option>
+                                <option value="4"
+                                        t-att-selected="form_data.get('rating') == '4'">
+                                    ★★★★☆ Good (4)
+                                </option>
+                                <option value="3"
+                                        t-att-selected="form_data.get('rating') == '3'">
+                                    ★★★☆☆ Average (3)
+                                </option>
+                                <option value="2"
+                                        t-att-selected="form_data.get('rating') == '2'">
+                                    ★★☆☆☆ Poor (2)
+                                </option>
+                                <option value="1"
+                                        t-att-selected="form_data.get('rating') == '1'">
+                                    ★☆☆☆☆ Terrible (1)
+                                </option>
+                            </select>
+                            <t t-if="error.get('rating')">
+                                <span class="mc-error-msg">
+                                    <t t-out="error['rating']"/>
+                                </span>
+                            </t>
+                        </div>
+
+                        <!-- Title -->
+                        <div class="mc-form-group">
+                            <label class="mc-label">Review Title</label>
+                            <input type="text" name="title" class="mc-input"
+                                   placeholder="Summarise your experience..."
+                                   t-att-value="form_data.get('title', '')"/>
+                        </div>
+
+                        <!-- Review Text -->
+                        <div class="mc-form-group"
+                             t-att-class="'mc-has-error' if error.get('review') else ''">
+                            <label class="mc-label">
+                                Your Review
+                                <span class="mc-required">*</span>
+                            </label>
+                            <textarea name="review" class="mc-textarea" rows="4"
+                                      placeholder="Describe your experience...">
+                                <t t-out="form_data.get('review', '')"/>
+                            </textarea>
+                            <t t-if="error.get('review')">
+                                <span class="mc-error-msg">
+                                    <t t-out="error['review']"/>
+                                </span>
+                            </t>
+                        </div>
+
+                        <!-- Aspect Ratings -->
+                        <div class="mc-form-group">
+                            <label class="mc-label">Punctuality (optional)</label>
+                            <select name="punctuality_rating" class="mc-input">
+                                <option value="0">— Not rated —</option>
+                                <option value="5" t-att-selected="form_data.get('punctuality_rating') == '5'">★★★★★
+                                    (5)
+                                </option>
+                                <option value="4" t-att-selected="form_data.get('punctuality_rating') == '4'">★★★★☆
+                                    (4)
+                                </option>
+                                <option value="3" t-att-selected="form_data.get('punctuality_rating') == '3'">★★★☆☆
+                                    (3)
+                                </option>
+                                <option value="2" t-att-selected="form_data.get('punctuality_rating') == '2'">★★☆☆☆
+                                    (2)
+                                </option>
+                                <option value="1" t-att-selected="form_data.get('punctuality_rating') == '1'">★☆☆☆☆
+                                    (1)
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="mc-form-group">
+                            <label class="mc-label">Communication (optional)</label>
+                            <select name="communication_rating" class="mc-input">
+                                <option value="0">— Not rated —</option>
+                                <option value="5" t-att-selected="form_data.get('communication_rating') == '5'">★★★★★
+                                    (5)
+                                </option>
+                                <option value="4" t-att-selected="form_data.get('communication_rating') == '4'">★★★★☆
+                                    (4)
+                                </option>
+                                <option value="3" t-att-selected="form_data.get('communication_rating') == '3'">★★★☆☆
+                                    (3)
+                                </option>
+                                <option value="2" t-att-selected="form_data.get('communication_rating') == '2'">★★☆☆☆
+                                    (2)
+                                </option>
+                                <option value="1" t-att-selected="form_data.get('communication_rating') == '1'">★☆☆☆☆
+                                    (1)
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="mc-form-group">
+                            <label class="mc-label">Treatment Quality (optional)</label>
+                            <select name="treatment_rating" class="mc-input">
+                                <option value="0">— Not rated —</option>
+                                <option value="5" t-att-selected="form_data.get('treatment_rating') == '5'">★★★★★ (5)
+                                </option>
+                                <option value="4" t-att-selected="form_data.get('treatment_rating') == '4'">★★★★☆ (4)
+                                </option>
+                                <option value="3" t-att-selected="form_data.get('treatment_rating') == '3'">★★★☆☆ (3)
+                                </option>
+                                <option value="2" t-att-selected="form_data.get('treatment_rating') == '2'">★★☆☆☆ (2)
+                                </option>
+                                <option value="1" t-att-selected="form_data.get('treatment_rating') == '1'">★☆☆☆☆ (1)
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Would Recommend -->
+                        <div class="mc-form-group">
+                            <label class="mc-label">
+                                <input type="checkbox" name="would_recommend"
+                                       value="1"
+                                       t-att-checked="form_data.get('would_recommend')"/>
+                                I would recommend this doctor
+                            </label>
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="mc-form-submit">
+                            <a href="/my/appointments" class="mc-btn mc-btn-outline">
+                                Cancel
+                            </a>
+                            <button type="submit" class="mc-btn mc-btn-primary">
+                                Submit Review
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- REVIEW SUBMISSION SUCCESS                                     -->
+    <!-- ============================================================ -->
+    <template id="portal_review_success" name="MedConnect - Review Submitted">
+        <t t-call="website.layout">
+            <div id="wrap" class="medconnect-page">
+                <div class="container" style="max-width: 560px; padding: 60px 15px; text-align: center;">
+                    <i class="fa fa-check-circle fa-4x" style="color: #28a745; margin-bottom: 20px;"/>
+                    <h2>Thank You for Your Review!</h2>
+                    <p style="color: #666; margin: 16px 0 32px;">
+                        Your review for Dr.
+                        <strong>
+                            <t t-out="doctor.name"/>
+                        </strong>
+                        has been submitted and is pending approval.
+                        It will appear on the doctor's profile once approved.
+                    </p>
+                    <a href="/my/appointments" class="mc-btn mc-btn-primary">
+                        Back to Appointments
+                    </a>
+                </div>
+            </div>
+        </t>
+    </template>
+
 </odoo>

@@ -21,7 +21,7 @@ class CountryComplianceController(http.Controller):
 
     @http.route(
         "/get-country-compliance",
-        type="json",
+        type="jsonrpc",
         auth="public",
         csrf=False,
     )
@@ -63,7 +63,7 @@ class CountryComplianceController(http.Controller):
 
     @http.route(
         "/check-compliance-accepted",
-        type="json",
+        type="jsonrpc",
         auth="user",
         csrf=False,
     )
@@ -116,7 +116,7 @@ class CountryComplianceController(http.Controller):
 
     @http.route(
         "/accept-regenerated-compliance",
-        type="json",
+        type="jsonrpc",
         auth="user",
         website=True,
     )

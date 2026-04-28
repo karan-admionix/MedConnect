@@ -1,0 +1,484 @@
+/* =============================================================
+   MedConnect — Doctor Registration Form Redesign
+   Scope : .mc-reg-page (registration page wrapper only)
+   File  : static/src/css/registration_form.css
+   Author: ADX Medicare
+   ============================================================= */
+
+/* ── Page Background ─────────────────────────────────────────── */
+.mc-reg-page {
+    min-height: 100vh;
+    background: linear-gradient(160deg, #eaf4fb 0%, #f0f7ff 50%, #f5f0ff 100%);
+    padding: 48px 0 72px;
+}
+
+/* ── Form Container ──────────────────────────────────────────── */
+.mc-reg-page .mc-form-container {
+    max-width: 780px;
+    padding: 0 20px;
+}
+
+/* ── Form Card ───────────────────────────────────────────────── */
+.mc-reg-page .mc-form-card {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.04),
+        0 8px 32px rgba(0, 119, 204, 0.08),
+        0 0 0 1px rgba(0, 119, 204, 0.06);
+    padding: 0;
+    overflow: hidden;
+}
+
+/* ── Card Hero Header ────────────────────────────────────────── */
+.mc-reg-page .mc-form-header {
+    background: linear-gradient(135deg, #0055aa 0%, #0077cc 55%, #00a3e0 100%);
+    padding: 40px 48px 36px;
+    text-align: center;
+    margin-bottom: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.mc-reg-page .mc-form-header::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    pointer-events: none;
+}
+
+.mc-reg-page .mc-form-header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px;
+    left: -40px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    pointer-events: none;
+}
+
+.mc-reg-page .mc-form-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 10px;
+    letter-spacing: -0.3px;
+}
+
+.mc-reg-page .mc-form-title i {
+    margin-right: 10px;
+    opacity: 0.9;
+}
+
+.mc-reg-page .mc-form-subtitle {
+    font-size: 14.5px;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* ── Progress Steps Strip ────────────────────────────────────── */
+.mc-reg-page .mc-reg-steps {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    background: #f0f6fc;
+    border-bottom: 1px solid #dce8f5;
+    padding: 14px 40px;
+}
+
+.mc-reg-page .mc-reg-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #a0aec0;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.mc-reg-page .mc-reg-step.mc-step-active {
+    color: #0077cc;
+}
+
+.mc-reg-page .mc-reg-step-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #dce8f5;
+    color: #718096;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.mc-reg-page .mc-reg-step.mc-step-active .mc-reg-step-num {
+    background: #0077cc;
+    color: #fff;
+}
+
+.mc-reg-page .mc-reg-step-sep {
+    width: 32px;
+    height: 1px;
+    background: #cbd5e0;
+    margin: 0 10px;
+}
+
+/* ── Form Body ───────────────────────────────────────────────── */
+.mc-reg-page .mc-form {
+    padding: 36px 48px 44px;
+}
+
+@media (max-width: 600px) {
+    .mc-reg-page .mc-form-header { padding: 30px 24px 26px; }
+    .mc-reg-page .mc-form { padding: 24px 20px 32px; }
+    .mc-reg-page .mc-reg-steps { padding: 12px 16px; gap: 4px; }
+    .mc-reg-page .mc-reg-step-sep { width: 16px; margin: 0 4px; }
+}
+
+/* ── Section Dividers ────────────────────────────────────────── */
+.mc-reg-page .mc-section-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #0077cc;
+    margin: 32px 0 20px;
+    padding: 0;
+    border: none;
+}
+
+.mc-reg-page .mc-section-divider::before {
+    content: '';
+    width: 4px;
+    height: 18px;
+    background: linear-gradient(180deg, #0077cc, #00a3e0);
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.mc-reg-page .mc-section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, #dce8f5 0%, transparent 100%);
+}
+
+.mc-reg-page .mc-form .mc-section-divider:first-of-type {
+    margin-top: 0;
+}
+
+/* ── Form Grid ───────────────────────────────────────────────── */
+.mc-reg-page .mc-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+    .mc-reg-page .mc-form-row { grid-template-columns: 1fr; gap: 0; }
+}
+
+/* ── Form Groups ─────────────────────────────────────────────── */
+.mc-reg-page .mc-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 20px;
+}
+
+.mc-reg-page .mc-form-group-full {
+    grid-column: 1 / -1;
+    margin-bottom: 20px;
+}
+
+/* ── Labels ──────────────────────────────────────────────────── */
+.mc-reg-page .mc-label {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #374151;
+    letter-spacing: 0.02em;
+}
+
+.mc-reg-page .mc-required {
+    color: #e53e3e;
+    margin-left: 2px;
+}
+
+/* ── Inputs ──────────────────────────────────────────────────── */
+.mc-reg-page .mc-input,
+.mc-reg-page .mc-textarea {
+    padding: 10px 14px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #1a202c;
+    background: #fafbfc;
+    transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+    width: 100%;
+    box-sizing: border-box;
+    line-height: 1.5;
+}
+
+.mc-reg-page .mc-input:hover,
+.mc-reg-page .mc-textarea:hover {
+    border-color: #b0c8e8;
+    background: #fff;
+}
+
+.mc-reg-page .mc-input:focus,
+.mc-reg-page .mc-textarea:focus {
+    outline: none;
+    border-color: #0077cc;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 119, 204, 0.1);
+}
+
+.mc-reg-page select.mc-input {
+    appearance: auto;
+    cursor: pointer;
+}
+
+.mc-reg-page .mc-textarea {
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.6;
+}
+
+/* ── Error States ────────────────────────────────────────────── */
+.mc-reg-page .mc-has-error .mc-input,
+.mc-reg-page .mc-has-error .mc-textarea,
+.mc-reg-page .mc-has-error select.mc-input,
+.mc-reg-page .mc-has-error .mc-phone-wrap {
+    border-color: #fc8181;
+    background: #fff5f5;
+}
+
+.mc-reg-page .mc-error-msg {
+    font-size: 12px;
+    color: #e53e3e;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ── General Alert ───────────────────────────────────────────── */
+.mc-reg-page .mc-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    margin: 0 48px 24px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.mc-reg-page .mc-alert-error {
+    background: #fff5f5;
+    color: #c53030;
+    border: 1px solid #fed7d7;
+}
+
+.mc-reg-page .mc-alert i {
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+@media (max-width: 600px) {
+    .mc-reg-page .mc-alert { margin: 0 20px 20px; }
+}
+
+/* ── Phone Field ─────────────────────────────────────────────── */
+.mc-reg-page .mc-phone-wrap {
+    display: flex;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fafbfc;
+    transition: border-color 0.18s, box-shadow 0.18s;
+}
+
+.mc-reg-page .mc-phone-wrap:focus-within {
+    border-color: #0077cc;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 119, 204, 0.1);
+}
+
+.mc-reg-page .mc-phone-code {
+    flex: 0 0 auto;
+    width: 112px;
+    padding: 10px 8px;
+    border: none;
+    border-right: 1.5px solid #e2e8f0;
+    border-radius: 0;
+    font-size: 13px;
+    color: #374151;
+    background: #f1f5f9;
+    cursor: pointer;
+    appearance: auto;
+    outline: none;
+    transition: background 0.15s;
+}
+
+.mc-reg-page .mc-phone-code:focus {
+    background: #e8f0f8;
+    outline: none;
+}
+
+.mc-reg-page .mc-phone-number {
+    flex: 1;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    outline: none !important;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #1a202c;
+    min-width: 0;
+}
+
+/* ── Compliance Section ──────────────────────────────────────── */
+.mc-reg-page #compliance_section {
+    background: #f0f7ff;
+    border: 1.5px solid #bee3f8;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+}
+
+.mc-reg-page #compliance_section > .mc-label {
+    font-size: 13px;
+    color: #0c4a6e;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.mc-reg-page #compliance_description {
+    background: #fff;
+    border: 1px solid #bee3f8;
+    border-radius: 8px;
+    padding: 14px 16px;
+    max-height: 280px;
+    overflow-y: auto;
+    font-size: 13.5px;
+    color: #374151;
+    line-height: 1.65;
+    margin-bottom: 14px;
+}
+
+.mc-reg-page .mc-compliance-check-wrap {
+    background: #fff;
+    border: 1.5px solid #bee3f8;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 0;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.mc-reg-page .mc-compliance-check-wrap.mc-compliance-required {
+    border-color: #fc8181;
+    background: #fff5f5;
+}
+
+.mc-reg-page .mc-compliance-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #0c4a6e;
+    line-height: 1.5;
+}
+
+.mc-reg-page .mc-compliance-label input[type="checkbox"] {
+    margin-top: 2px;
+    accent-color: #0077cc;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.mc-reg-page .mc-compliance-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: 12.5px;
+    color: #e53e3e;
+    font-weight: 500;
+}
+
+/* ── Submit Block ────────────────────────────────────────────── */
+.mc-reg-page .mc-form-submit {
+    margin-top: 32px;
+    text-align: center;
+    padding-top: 28px;
+    border-top: 1px solid #e8f0f8;
+}
+
+.mc-reg-page .mc-btn-primary {
+    background: linear-gradient(135deg, #005fa3 0%, #0077cc 100%);
+    border: none;
+    border-radius: 10px;
+    padding: 14px 40px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(0, 119, 204, 0.3);
+    transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    cursor: pointer;
+}
+
+.mc-reg-page .mc-btn-primary:hover {
+    background: linear-gradient(135deg, #004f8a 0%, #005fa3 100%);
+    box-shadow: 0 6px 20px rgba(0, 119, 204, 0.38);
+    transform: translateY(-1px);
+    color: #fff;
+    text-decoration: none;
+}
+
+.mc-reg-page .mc-btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 119, 204, 0.25);
+}
+
+.mc-reg-page .mc-btn-primary i {
+    margin-right: 8px;
+}
+
+.mc-reg-page .mc-form-note {
+    font-size: 12.5px;
+    color: #a0aec0;
+    margin-top: 14px;
+    line-height: 1.6;
+}
+
+/* ── Input Icon Hint (optional helper text) ──────────────────── */
+.mc-reg-page .mc-input-hint {
+    font-size: 11.5px;
+    color: #a0aec0;
+    margin-top: 2px;
+}

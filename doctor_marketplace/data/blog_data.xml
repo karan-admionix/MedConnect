@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================ -->
+        <!-- BLOGS (Medical Categories)                                   -->
+        <!-- ============================================================ -->
+        <record id="blog_patient_education" model="blog.blog">
+            <field name="name">Patient Education</field>
+            <field name="subtitle">Evidence-based health information for patients and families</field>
+        </record>
+
+        <record id="blog_doctor_insights" model="blog.blog">
+            <field name="name">Doctor Insights</field>
+            <field name="subtitle">Clinical knowledge and professional perspectives from our doctors</field>
+        </record>
+
+        <record id="blog_treatment_guides" model="blog.blog">
+            <field name="name">Treatment Guides</field>
+            <field name="subtitle">Step-by-step guides for common treatments and procedures</field>
+        </record>
+
+        <record id="blog_health_news" model="blog.blog">
+            <field name="name">Health News</field>
+            <field name="subtitle">Latest developments in medicine and healthcare</field>
+        </record>
+
+        <record id="blog_wellness" model="blog.blog">
+            <field name="name">Wellness &amp; Prevention</field>
+            <field name="subtitle">Tips and advice for a healthier lifestyle</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- TAG CATEGORIES                                               -->
+        <!-- ============================================================ -->
+        <record id="blog_tag_cat_specialty" model="blog.tag.category">
+            <field name="name">Medical Specialty</field>
+        </record>
+
+        <record id="blog_tag_cat_content_type" model="blog.tag.category">
+            <field name="name">Content Type</field>
+        </record>
+
+        <record id="blog_tag_cat_audience" model="blog.tag.category">
+            <field name="name">Audience</field>
+        </record>
+
+        <record id="blog_tag_cat_condition" model="blog.tag.category">
+            <field name="name">Health Condition</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- TAGS — Medical Specialty                                     -->
+        <!-- ============================================================ -->
+        <record id="blog_tag_cardiology" model="blog.tag">
+            <field name="name">Cardiology</field>
+            <field name="category_id" ref="blog_tag_cat_specialty"/>
+            <field name="color">1</field>
+        </record>
+
+        <record id="blog_tag_neurology" model="blog.tag">
+            <field name="name">Neurology</field>
+            <field name="category_id" ref="blog_tag_cat_specialty"/>
+            <field name="color">1</field>
+        </record>
+
+        <record id="blog_tag_orthopedics" model="blog.tag">
+            <field name="name">Orthopedics</field>
+            <field name="category_id" ref="blog_tag_cat_specialty"/>
+            <field name="color">1</field>
+        </record>
+
+        <record id="blog_tag_pediatrics" model="blog.tag">
+            <field name="name">Pediatrics</field>
+            <field name="category_id" ref="blog_tag_cat_specialty"/>
+            <field name="color">1</field>
+        </record>
+
+        <record id="blog_tag_dermatology" model="blog.tag">
+            <field name="name">Dermatology</field>
+            <field name="category_id" ref="blog_tag_cat_specialty"/>
+            <field name="color">1</field>
+        </record>
+
+        <record id="blog_tag_gynecology" model="blog.tag">
+            <field name="name">Gynecology</field>
+            <field name="category_id" ref="blog_tag_cat_specialty"/>
+            <field name="color">1</field>
+        </record>
+
+        <record id="blog_tag_psychiatry" model="blog.tag">
+            <field name="name">Psychiatry</field>
+            <field name="category_id" ref="blog_tag_cat_specialty"/>
+            <field name="color">1</field>
+        </record>
+
+        <record id="blog_tag_general_medicine" model="blog.tag">
+            <field name="name">General Medicine</field>
+            <field name="category_id" ref="blog_tag_cat_specialty"/>
+            <field name="color">1</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- TAGS — Content Type                                          -->
+        <!-- ============================================================ -->
+        <record id="blog_tag_featured" model="blog.tag">
+            <field name="name">Featured</field>
+            <field name="category_id" ref="blog_tag_cat_content_type"/>
+            <field name="color">2</field>
+        </record>
+
+        <record id="blog_tag_verified" model="blog.tag">
+            <field name="name">Verified by Doctor</field>
+            <field name="category_id" ref="blog_tag_cat_content_type"/>
+            <field name="color">2</field>
+        </record>
+
+        <record id="blog_tag_case_study" model="blog.tag">
+            <field name="name">Case Study</field>
+            <field name="category_id" ref="blog_tag_cat_content_type"/>
+            <field name="color">2</field>
+        </record>
+
+        <record id="blog_tag_how_to" model="blog.tag">
+            <field name="name">How-To Guide</field>
+            <field name="category_id" ref="blog_tag_cat_content_type"/>
+            <field name="color">2</field>
+        </record>
+
+        <record id="blog_tag_research" model="blog.tag">
+            <field name="name">Research Summary</field>
+            <field name="category_id" ref="blog_tag_cat_content_type"/>
+            <field name="color">2</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- TAGS — Audience                                              -->
+        <!-- ============================================================ -->
+        <record id="blog_tag_for_patients" model="blog.tag">
+            <field name="name">For Patients</field>
+            <field name="category_id" ref="blog_tag_cat_audience"/>
+            <field name="color">4</field>
+        </record>
+
+        <record id="blog_tag_for_doctors" model="blog.tag">
+            <field name="name">For Doctors</field>
+            <field name="category_id" ref="blog_tag_cat_audience"/>
+            <field name="color">4</field>
+        </record>
+
+        <record id="blog_tag_for_caregivers" model="blog.tag">
+            <field name="name">For Caregivers</field>
+            <field name="category_id" ref="blog_tag_cat_audience"/>
+            <field name="color">4</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- TAGS — Health Condition                                      -->
+        <!-- ============================================================ -->
+        <record id="blog_tag_diabetes" model="blog.tag">
+            <field name="name">Diabetes</field>
+            <field name="category_id" ref="blog_tag_cat_condition"/>
+            <field name="color">10</field>
+        </record>
+
+        <record id="blog_tag_hypertension" model="blog.tag">
+            <field name="name">Hypertension</field>
+            <field name="category_id" ref="blog_tag_cat_condition"/>
+            <field name="color">10</field>
+        </record>
+
+        <record id="blog_tag_mental_health" model="blog.tag">
+            <field name="name">Mental Health</field>
+            <field name="category_id" ref="blog_tag_cat_condition"/>
+            <field name="color">10</field>
+        </record>
+
+        <record id="blog_tag_nutrition" model="blog.tag">
+            <field name="name">Nutrition</field>
+            <field name="category_id" ref="blog_tag_cat_condition"/>
+            <field name="color">10</field>
+        </record>
+
+        <record id="blog_tag_womens_health" model="blog.tag">
+            <field name="name">Women's Health</field>
+            <field name="category_id" ref="blog_tag_cat_condition"/>
+            <field name="color">10</field>
+        </record>
+
+        <record id="blog_tag_child_health" model="blog.tag">
+            <field name="name">Child Health</field>
+            <field name="category_id" ref="blog_tag_cat_condition"/>
+            <field name="color">10</field>
+        </record>
+
+    </data>
+</odoo>

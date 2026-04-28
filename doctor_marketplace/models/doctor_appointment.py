@@ -102,7 +102,7 @@ class DoctorAppointment(models.Model):
 
     # Review
     review_id = fields.Many2one('doctor.review', string='Review')
-    has_review = fields.Boolean(compute='_compute_has_review', string='Has Review')
+    has_review = fields.Boolean(compute='_compute_has_review', string='Has Review', store=True)
 
     # Waitlist
     booked_from_waitlist = fields.Boolean(string='From Waitlist', default=False)
@@ -123,7 +123,7 @@ class DoctorAppointment(models.Model):
     def _compute_final_amount(self):
         for record in self:
             record.final_amount = record.consultation_fee - (record.discount_amount or 0) - (
-                        record.subscription_discount or 0)
+                    record.subscription_discount or 0)
 
     @api.depends('final_amount', 'platform_commission_percent')
     def _compute_commission(self):
@@ -131,6 +131,7 @@ class DoctorAppointment(models.Model):
             record.platform_commission = record.final_amount * (record.platform_commission_percent / 100)
             record.doctor_payout = record.final_amount - record.platform_commission
 
+    @api.depends('review_id')
     def _compute_has_review(self):
         for record in self:
             record.has_review = bool(record.review_id)
